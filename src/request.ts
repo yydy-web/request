@@ -64,12 +64,16 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       return this
     }
 
+    getStoreOption() {
+      return typeof storeOption === 'function' ? storeOption() : (storeOption || {}) as RequestStoreConfig
+    }
+
     withCacheAction<T, Callback = false>(
       isCache: boolean,
       cacheKey: string,
       resolve: (value: (Callback extends false ? T : Callback)
       | PromiseLike<Callback extends false ? T : Callback>) => void) {
-      const { getStore } = typeof storeOption === 'function' ? storeOption() : storeOption as RequestStoreConfig
+      const { getStore } = this.getStoreOption()
       // cacheAction
       if (sendToken.get(cacheKey)) {
         this.obSend.once(cacheKey, resolve as any)
@@ -86,7 +90,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     emitCache(isCache: boolean, cacheKey: string) {
-      const { getStore } = typeof storeOption === 'function' ? storeOption() : storeOption as RequestStoreConfig
+      const { getStore } = this.getStoreOption()
       const cacheData = getStore(cacheKey)
       if (isCache && sendToken.get(cacheKey) && cacheData) {
         sendToken.delete(cacheKey)
@@ -113,7 +117,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       const cacheKey = `${url}${JSON.stringify(sendData)}`
       const isCache = this.cache && toMethod === 'GET'
       return new Promise((resolve, reject) => {
-        const { setStore } = typeof storeOption === 'function' ? storeOption() : storeOption as RequestStoreConfig
+        const { setStore } = this.getStoreOption()
 
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
