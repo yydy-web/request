@@ -1,2 +1,2 @@
-## @yy-web/template
+## @yy-web/request
 

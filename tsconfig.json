@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "ESNext",
     "module": "esnext",
-    "lib": ["esnext"],
+    "lib": ["ESNext", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
@@ -10,6 +10,7 @@
     "resolveJsonModule": true,
     "skipDefaultLibCheck": true,
     "declaration": true,
+    "baseUrl": "./",
     "outDir": "dist"
   },
   "include": ["./src"],
