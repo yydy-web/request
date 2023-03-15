@@ -1,11 +1,10 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Method } from 'axios'
-import EventEmitter from './mitt'
-
-export * from './var'
+import emitter from './mitt'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
   loading?: boolean
   isFile?: boolean
+  cache?: boolean
 }
 
 export interface IRequest {
@@ -26,7 +25,7 @@ export interface IRequest {
   put<T>(data?: object): Promise<T>
   del<T>(params?: object): Promise<T>
   upload<T>(file: File, data?: object): Promise<T>
-  downLoad(params?: object, methods?: 'post' | 'get', fileName?: string): Promise<unknown>
+  downLoad(params?: object, methods?: 'post' | 'get', fileName?: string): Promise<void>
 }
 
 export interface RequestStoreConfig {
@@ -41,8 +40,21 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     static instance: IRequest | null = null
     private path?: string
     private config: IAxiosRequestConfig = {}
-    private cache = false
-    private obSend = EventEmitter
+    private obSend = emitter
+
+    static getStoreOption() {
+      return typeof storeOption === 'function' ? storeOption() : (storeOption || {}) as RequestStoreConfig
+    }
+
+    static setStore(key: string, data: any) {
+      const { setStore } = Request.getStoreOption()
+      return setStore(key, data)
+    }
+
+    static getStore(key: string) {
+      const { getStore } = Request.getStoreOption()
+      return getStore(key)
+    }
 
     static getInstance() {
       if (!Request.instance)
@@ -73,7 +85,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       cacheKey: string,
       resolve: (value: (Callback extends false ? T : Callback)
       | PromiseLike<Callback extends false ? T : Callback>) => void) {
-      const { getStore } = this.getStoreOption()
+      const { getStore } = Request.getStoreOption()
       // cacheAction
       if (sendToken.get(cacheKey)) {
         this.obSend.once(cacheKey, resolve as any)
@@ -90,7 +102,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     emitCache(isCache: boolean, cacheKey: string) {
-      const { getStore } = this.getStoreOption()
+      const { getStore } = Request.getStoreOption()
       const cacheData = getStore(cacheKey)
       if (isCache && sendToken.get(cacheKey) && cacheData) {
         sendToken.delete(cacheKey)
@@ -115,10 +127,8 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
       const url = `${this.path}`.replace(/(\/\/)/g, '/')
       const cacheKey = `${url}${JSON.stringify(sendData)}`
-      const isCache = this.cache && toMethod === 'GET'
+      const isCache = !!(this.config.cache && toMethod === 'GET')
       return new Promise((resolve, reject) => {
-        const { setStore } = this.getStoreOption()
-
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
@@ -131,7 +141,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
           .then((data: any) => {
             const withData = typeof callback === 'function' ? callback(data) : data
             if (isCache)
-              storeOption && setStore(cacheKey, withData)
+              Request.setStore(cacheKey, withData)
 
             resolve(withData)
           })
@@ -149,7 +159,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         cache = params
         params = {}
       }
-      this.cache = cache
+      this.config.cache = cache
       return this.withAction<T, Callback>(params, 'GET', dataCallback)
     }
 
@@ -173,7 +183,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       return this.withAction<T>(formData, 'post')
     }
 
-    downLoad(params?: object | undefined, methods: 'post' | 'get' = 'get', fileName?: string | undefined): Promise<unknown> {
+    downLoad(params: object = {}, methods: 'post' | 'get' = 'get', fileName = ''): Promise<void> {
       this.setConfig(Object.assign(this.config, { isFile: true, responseType: 'blob' }))
       return new Promise((resolve) => {
         this.withAction<[File, AxiosRequestHeaders]>(params, methods || 'get').then(([file, config]) => {
@@ -197,7 +207,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
             if (nav.msSaveBlob)
               nav.msSaveBlob(blob, fileName)
           }
-          resolve(null)
+          resolve()
         })
       })
     }

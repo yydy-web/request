@@ -1,3 +1,4 @@
+import type { Emitter } from 'mitt'
 import mitt from 'mitt'
 
 declare module 'mitt' {
@@ -6,7 +7,7 @@ declare module 'mitt' {
   }
 }
 
-const emitter = mitt()
+const emitter: Emitter<{ [key: string]: unknown }> = mitt()
 
 emitter.once = (type, handler) => {
   const fn = (...args: any[]) => {
