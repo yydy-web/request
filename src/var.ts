@@ -10,9 +10,13 @@ function setRequest(requestFn: IRequest) {
 }
 
 function getRequest() {
-  if (!request)
-    console.error('[mx:error]: not found request of @mx-web/use')
-  return request
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      if (!request)
+        console.error('[mx:error]: not found request of @yy-web/request')
+      resolve(request)
+    }, 0)
+  })
 }
 
 export default function createApi() {
