@@ -3,7 +3,10 @@ import type { IRequest } from './request'
 let request: IRequest | null = null
 
 function setRequest(requestFn: IRequest) {
-  request = requestFn
+  return new Promise<void>((resolve) => {
+    request = requestFn
+    resolve()
+  })
 }
 
 function getRequest() {
