@@ -2,26 +2,12 @@ import type { IRequest } from './request'
 
 let request: IRequest | null = null
 
-function setRequest(requestFn: IRequest) {
-  return new Promise<void>((resolve) => {
-    request = requestFn
-    resolve()
-  })
+export function setRequest(requestFn: IRequest) {
+  request = requestFn
 }
 
-function getRequest() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (!request)
-        console.error('[mx:error]: not found request of @yy-web/request')
-      resolve(request)
-    }, 0)
-  })
-}
-
-export default function createApi() {
-  return {
-    setRequest,
-    getRequest,
-  }
+export function getRequest() {
+  if (!request)
+    console.error('[yy-web:error]: not found request of @yy-web/request')
+  return request
 }
