@@ -4,7 +4,9 @@ import TheWelcome from './components/TheWelcome.vue'
 import request from './request'
 
 function test() {
-  request.setPath('/banner/list').get()
+  request.setPath('/banner/list').get(true).then((result) => {
+    // console.log(result)
+  })
 }
 </script>
 
