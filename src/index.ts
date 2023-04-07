@@ -3,3 +3,4 @@ export * from './request'
 export default request
 export * from './downConf'
 export * from './var'
+export * from './cache'

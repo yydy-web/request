@@ -1,4 +1,5 @@
-import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Method } from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Canceler, Method } from 'axios'
+import axios from 'axios'
 import emitter from './mitt'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
@@ -35,6 +36,7 @@ export interface RequestStoreConfig {
 
 export default function (service: AxiosInstance, storeOption?: RequestStoreConfig | (() => RequestStoreConfig)) {
   const sendToken: Map<string, any> = new Map()
+  const cancelTokenMap: Map<string, Canceler | null> = new Map()
 
   class Request implements IRequest {
     static instance: IRequest | null = null
@@ -132,10 +134,18 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
+        const cancelToken = cancelTokenMap.get(cacheKey)
+        if (cancelToken) {
+          cancelToken()
+          cancelTokenMap.delete(cacheKey)
+        }
         service({
           url,
           method: toMethod,
           [isSendData ? 'data' : 'params']: sendData,
+          cancelToken: new axios.CancelToken((c) => {
+            cancelTokenMap.set(cacheKey, c)
+          }),
           ...this.config,
         })
           .then((data: any) => {
@@ -147,6 +157,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
           })
           .catch(reject)
           .finally(() => {
+            cancelTokenMap.delete(cacheKey)
             if (!storeOption)
               return
             this.emitCache(isCache, cacheKey)
