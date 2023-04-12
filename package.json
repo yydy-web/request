@@ -1,6 +1,6 @@
 {
   "name": "@yy-web/request",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "packageManager": "pnpm@7.1.0",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
@@ -32,7 +32,7 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "dev": "pnpm run build --watch",
-    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting",
+    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
     "release": "bumpp --commit --push --tag && pnpm publish",
     "test": "vitest",
     "lint": "eslint ."
