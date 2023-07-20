@@ -1,6 +1,6 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Canceler, Method } from 'axios'
 import axios from 'axios'
-import emitter from './mitt'
+import { Publisher } from './mitt'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
   loading?: boolean
@@ -42,7 +42,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     static instance: IRequest | null = null
     private path?: string
     private config: IAxiosRequestConfig = {}
-    private obSend = emitter
+    private obSend = new Publisher()
 
     static getStoreOption() {
       return typeof storeOption === 'function' ? storeOption() : (storeOption || {}) as RequestStoreConfig

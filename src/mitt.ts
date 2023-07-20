@@ -1,21 +1,38 @@
-import type { Emitter } from 'mitt'
-import mitt from 'mitt'
+type EventCallback = (...args: any[]) => void
 
-declare module 'mitt' {
-  export interface Emitter<Events extends Record<EventType, unknown>> {
-    once<Key extends keyof Events>(type: Key, handler: Handler<Events[Key]>): void
-  }
-}
+export class Publisher {
+  private events: Record<string, EventCallback[]> = {}
 
-const emitter: Emitter<{ [key: string]: unknown }> = mitt()
+  // 订阅事件
+  on(event: string, callback: EventCallback): void {
+    if (!this.events[event])
+      this.events[event] = []
 
-emitter.once = (type, handler) => {
-  const fn = (...args: any[]) => {
-    emitter.off(type, fn)
-    handler(args)
+    this.events[event].push(callback)
   }
 
-  emitter.on(type, fn)
-}
+  // 发布事件
+  emit(event: string, ...args: any[]): void {
+    const callbacks = this.events[event]
+    if (callbacks) {
+      for (const callback of callbacks)
+        callback(...args)
+    }
+  }
 
-export default emitter
+  // 取消订阅事件
+  off(event: string, callback: EventCallback): void {
+    const callbacks = this.events[event]
+    if (callbacks)
+      this.events[event] = callbacks.filter(cb => cb !== callback)
+  }
+
+  // 仅订阅一次事件
+  once(event: string, callback: EventCallback): void {
+    const wrappedCallback: EventCallback = (...args) => {
+      callback(...args)
+      this.off(event, wrappedCallback)
+    }
+    this.on(event, wrappedCallback)
+  }
+}
