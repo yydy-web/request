@@ -128,7 +128,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       const toMethod = methods.toUpperCase()
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
       const url = `${this.path}`.replace(/(\/\/)/g, '/')
-      const cacheKey = `${url}${JSON.stringify(sendData)}`
+      const cacheKey = `${url}${methods.toUpperCase()}${JSON.stringify(sendData)}`
       const isCache = !!(this.config.cache && toMethod === 'GET')
       return new Promise((resolve, reject) => {
         if (this.withCacheAction(isCache, cacheKey, resolve))

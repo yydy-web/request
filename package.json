@@ -33,7 +33,7 @@
     "prepublishOnly": "pnpm run build",
     "dev": "pnpm run build --watch",
     "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
-    "release": "bumpp --commit --push --tag && pnpm publish",
+    "release": "bumpp --commit --push --tag",
     "test": "vitest",
     "lint": "eslint ."
   },
