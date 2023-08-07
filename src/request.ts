@@ -196,7 +196,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
 
     downLoad(params: object = {}, methods: 'post' | 'get' = 'get', fileName = ''): Promise<void> {
       this.setConfig(Object.assign(this.config, { isFile: true, responseType: 'blob' }))
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         this.withAction<[File, AxiosRequestHeaders]>(params, methods || 'get').then(([file, config]) => {
           const blob = new Blob([file])
           fileName = fileName || decodeURIComponent(config['content-disposition'] as string).slice(20)
@@ -219,7 +219,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
               nav.msSaveBlob(blob, fileName)
           }
           resolve()
-        })
+        }).catch(reject)
       })
     }
   }
