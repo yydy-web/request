@@ -30,10 +30,11 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Publish to NPM
+       - name: Publish to NPM
+        run: pnpm -r publish --access public --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm publish --access public --no-git-checks
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+          NPM_CONFIG_PROVENANCE: true
 # jobs:
 #   build:
 #       runs-on: ubuntu-latest
