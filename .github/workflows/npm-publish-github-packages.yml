@@ -29,6 +29,10 @@ jobs:
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
 
+      - run: npx changelogithub
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
       - name: Install Dependencies
         run: pnpm i
 
