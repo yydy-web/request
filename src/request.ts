@@ -32,6 +32,7 @@ export interface IRequest {
 export interface RequestStoreConfig {
   getStore: (key: string) => any
   setStore: (key: string, data: any) => void
+  cancelRepeat?: boolean
 }
 
 export default function (service: AxiosInstance, storeOption?: RequestStoreConfig | (() => RequestStoreConfig)) {
@@ -144,7 +145,13 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
           method: toMethod,
           [isSendData ? 'data' : 'params']: sendData,
           cancelToken: new axios.CancelToken((c) => {
-            cancelTokenMap.set(cacheKey, c)
+            if (storeOption) {
+              if (typeof storeOption === 'function') {
+                storeOption().cancelRepeat && cancelTokenMap.set(cacheKey, c)
+                return
+              }
+              storeOption.cancelRepeat && cancelTokenMap.set(cacheKey, c)
+            }
           }),
           ...this.config,
         })
