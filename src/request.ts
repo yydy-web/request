@@ -35,7 +35,7 @@ export interface RequestStoreConfig {
   cancelRepeat?: boolean
 }
 
-export default function (service: AxiosInstance, storeOption?: RequestStoreConfig | (() => RequestStoreConfig)) {
+export default function (service: AxiosInstance, storeOption?: RequestStoreConfig) {
   const sendToken: Map<string, any> = new Map()
   const cancelTokenMap: Map<string, Canceler | null> = new Map()
 
@@ -46,7 +46,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private obSend = new Publisher()
 
     static getStoreOption() {
-      return typeof storeOption === 'function' ? storeOption() : (storeOption || {}) as RequestStoreConfig
+      return (storeOption || {}) as RequestStoreConfig
     }
 
     static setStore(key: string, data: any) {
@@ -77,10 +77,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     setConfig(config: IAxiosRequestConfig): IRequest {
       this.config = Object.assign(this.config, config)
       return this
-    }
-
-    getStoreOption() {
-      return typeof storeOption === 'function' ? storeOption() : (storeOption || {}) as RequestStoreConfig
     }
 
     withCacheAction<T, Callback = false>(
@@ -122,6 +118,21 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       return this
     }
 
+    execCancelToken(cacheKey: string) {
+      const cancelToken = cancelTokenMap.get(cacheKey)
+      if (cancelToken) {
+        cancelToken()
+        cancelTokenMap.delete(cacheKey)
+      }
+    }
+
+    createCancelToken(cacheKey: string, cancelToken: Canceler) {
+      this.execCancelToken(cacheKey)
+      setTimeout(() => {
+        cancelTokenMap.set(cacheKey, cancelToken)
+      })
+    }
+
     withAction<T, Callback = false>(
       sendData: any,
       methods: Method,
@@ -135,23 +146,14 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
-        const cancelToken = cancelTokenMap.get(cacheKey)
-        if (cancelToken) {
-          cancelToken()
-          cancelTokenMap.delete(cacheKey)
-        }
+        this.execCancelToken(cacheKey)
         service({
           url,
           method: toMethod,
           [isSendData ? 'data' : 'params']: sendData,
           cancelToken: new axios.CancelToken((c) => {
-            if (storeOption) {
-              if (typeof storeOption === 'function') {
-                storeOption().cancelRepeat && cancelTokenMap.set(cacheKey, c)
-                return
-              }
-              storeOption.cancelRepeat && cancelTokenMap.set(cacheKey, c)
-            }
+            if (storeOption)
+              storeOption.cancelRepeat && this.createCancelToken(cacheKey, c)
           }),
           ...this.config,
         })

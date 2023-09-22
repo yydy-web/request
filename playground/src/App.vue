@@ -8,10 +8,6 @@ function test() {
     console.log(result)
   })
 }
-
-test()
-test()
-test()
 </script>
 
 <template>
