@@ -1,6 +1,6 @@
 {
   "name": "@yy-web/request",
-  "version": "1.5.4",
+  "version": "1.5.5",
   "packageManager": "pnpm@7.1.0",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
