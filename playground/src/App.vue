@@ -4,7 +4,7 @@ import TheWelcome from './components/TheWelcome.vue'
 import request from './request'
 
 function test() {
-  request.setPath('/info.json').get(true).then((result) => {
+  request.setPath('/info.json').forceCancelRepeat().get().then((result) => {
     console.log(result)
   })
 }

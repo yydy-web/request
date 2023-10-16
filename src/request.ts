@@ -11,6 +11,7 @@ export interface IAxiosRequestConfig extends AxiosRequestConfig {
 export interface IRequest {
   setPath(url: string, loading?: boolean): IRequest
   setConfig(config: IAxiosRequestConfig): IRequest
+  forceCancelRepeat(): IRequest
   carry(key: string | number): IRequest
   withAction<T, Callback = false>(
     sendData: any,
@@ -44,6 +45,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private path?: string
     private config: IAxiosRequestConfig = {}
     private obSend = new Publisher()
+    private cancelRepeat = false
 
     static getStoreOption() {
       return (storeOption || {}) as RequestStoreConfig
@@ -70,12 +72,18 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       this.path = url
       this.config = {}
       this.setConfig({ loading })
+      this.cancelRepeat = false
 
       return this
     }
 
     setConfig(config: IAxiosRequestConfig): IRequest {
       this.config = Object.assign(this.config, config)
+      return this
+    }
+
+    forceCancelRepeat() {
+      this.cancelRepeat = true
       return this
     }
 
@@ -152,8 +160,8 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
           method: toMethod,
           [isSendData ? 'data' : 'params']: sendData,
           cancelToken: new axios.CancelToken((c) => {
-            if (storeOption)
-              storeOption.cancelRepeat && this.createCancelToken(cacheKey, c)
+            if (storeOption?.cancelRepeat || this.cancelRepeat)
+              this.createCancelToken(cacheKey, c)
           }),
           ...this.config,
         })

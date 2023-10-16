@@ -14,7 +14,7 @@ service.interceptors.response.use((response: any) => {
 })
 
 const yyRequest = request(service, {
-  getStore, setStore, cancelRepeat: true,
+  getStore, setStore,
 })
 setRequest(yyRequest)
 

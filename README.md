@@ -78,8 +78,23 @@ service.interceptors.response.use((response: any) => {
   return response.data
 })
 
+interface RequestStoreConfig {
+  getStore: (key: string) => any
+  setStore: (key: string, data: any) => void
+  cancelRepeat?: boolean // cancel repeat action
+}
+
 const yyRequest = request(service)
-setRequest(yyRequest)
+
+const store = {}
+function getStore(key: string) {
+  return store[key]
+}
+
+function setStore(key: string, data: any) {
+  store[key] = data
+}
+setRequest(yyRequest, { getStore, setStore, cancelRepeat: true })
 
 request.setPath('xxxx').downFile(data)
 ```
@@ -89,6 +104,7 @@ request.setPath('xxxx').downFile(data)
 interface IRequest {
   setPath(url: string, loading?: boolean): IRequest
   setConfig(config: IAxiosRequestConfig): IRequest
+  forceCancelRepeat(): IRequest
   carry(key: string | number): IRequest
   get<T, Callback = false>(params?: boolean | object, cache?: boolean, dataCallback?: (data: T) => Callback): Promise<Callback extends false ? T : Callback>
   post<T>(data?: object | FormData): Promise<T>
