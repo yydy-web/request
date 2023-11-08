@@ -1,0 +1,9 @@
+version: 2
+updates:
+  # 启用npm的版本更新
+  - package-ecosystem: "npm"
+    # 在根目录下寻找 `package.json` 和 `lock` 文件
+    directory: "/"
+    # 每天(工作日)检查 npm 注册表的更新
+    schedule:
+      interval: "daily"
