@@ -34,11 +34,14 @@ export interface RequestStoreConfig {
   getStore: (key: string) => any
   setStore: (key: string, data: any) => void
   cancelRepeat?: boolean
+  maxConcurrentNum: number
 }
 
 export default function (service: AxiosInstance, storeOption?: RequestStoreConfig) {
   const sendToken: Map<string, any> = new Map()
   const cancelTokenMap: Map<string, Canceler | null> = new Map()
+  const requestPool = new Set<() => void>()
+  const waitQueue: (() => void)[] = []
 
   class Request implements IRequest {
     static instance: IRequest | null = null
@@ -48,7 +51,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private cancelRepeat = false
 
     static getStoreOption() {
-      return (storeOption || {}) as RequestStoreConfig
+      return Object.assign({ maxConcurrentNum: 99 }, storeOption) as RequestStoreConfig
     }
 
     static setStore(key: string, data: any) {
@@ -154,31 +157,47 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
-        this.execCancelToken(cacheKey)
-        service({
-          url,
-          method: toMethod,
-          [isSendData ? 'data' : 'params']: sendData,
-          cancelToken: new axios.CancelToken((c) => {
-            if (storeOption?.cancelRepeat || this.cancelRepeat)
-              this.createCancelToken(cacheKey, c)
-          }),
-          ...this.config,
-        })
-          .then((data: any) => {
-            const withData = typeof callback === 'function' ? callback(data) : data
-            if (isCache)
-              Request.setStore(cacheKey, withData)
+        const isOverflow = requestPool.size >= Request.getStoreOption().maxConcurrentNum
+        this.execCancelToken(url)
+        const action = () => {
+          service({
+            url,
+            method: toMethod,
+            [isSendData ? 'data' : 'params']: sendData,
+            cancelToken: new axios.CancelToken((c) => {
+              if (storeOption?.cancelRepeat || this.cancelRepeat)
+                this.createCancelToken(url, c)
+            }),
+            ...this.config,
+          })
+            .then((data: any) => {
+              const withData = typeof callback === 'function' ? callback(data) : data
+              if (isCache)
+                Request.setStore(cacheKey, withData)
 
-            resolve(withData)
-          })
-          .catch(reject)
-          .finally(() => {
-            cancelTokenMap.delete(cacheKey)
-            if (!storeOption)
-              return
-            this.emitCache(isCache, cacheKey)
-          })
+              resolve(withData)
+            })
+            .catch(reject)
+            .finally(() => {
+              requestPool.delete(action)
+              cancelTokenMap.delete(cacheKey)
+              const next = waitQueue.shift()
+              next && requestPool.add(next)
+              setTimeout(() => {
+                next?.()
+              })
+              if (!storeOption)
+                return
+              this.emitCache(isCache, cacheKey)
+            })
+        }
+
+        if (isOverflow) {
+          waitQueue.push(action)
+          return
+        }
+        requestPool.add(action)
+        action()
       })
     }
 

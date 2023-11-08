@@ -4,15 +4,21 @@ import TheWelcome from './components/TheWelcome.vue'
 import request from './request'
 
 function test() {
-  request.setPath('/info.json').forceCancelRepeat().get().then((result) => {
+  request.setPath('/info.json').get().then((result) => {
     console.log(result)
   })
+}
+
+function start() {
+  // 循环test100次
+  for (let i = 0; i < 100; i++)
+    test()
 }
 </script>
 
 <template>
   <header>
-    <button @click="test">
+    <button @click="start">
       downfile
     </button>
     <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125">
