@@ -31,10 +31,10 @@ export interface IRequest {
 }
 
 export interface RequestStoreConfig {
-  getStore: (key: string) => any
-  setStore: (key: string, data: any) => void
+  getStore?: (key: string) => any
+  setStore?: (key: string, data: any) => void
   cancelRepeat?: boolean
-  maxConcurrentNum: number
+  maxConcurrentNum?: number
 }
 
 export default function (service: AxiosInstance, storeOption?: RequestStoreConfig) {
@@ -51,16 +51,22 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private cancelRepeat = false
 
     static getStoreOption() {
-      return Object.assign({ maxConcurrentNum: 99 }, storeOption) as RequestStoreConfig
+      return Object.assign({ maxConcurrentNum: 99 }, storeOption)
     }
 
     static setStore(key: string, data: any) {
       const { setStore } = Request.getStoreOption()
+      if (!setStore)
+        return
+
       return setStore(key, data)
     }
 
     static getStore(key: string) {
       const { getStore } = Request.getStoreOption()
+      if (!getStore)
+        return
+
       return getStore(key)
     }
 
@@ -101,7 +107,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         this.obSend.once(cacheKey, resolve as any)
         return true
       }
-      if (storeOption && isCache && getStore(cacheKey)) {
+      if (isCache && getStore && getStore(cacheKey)) {
         resolve(getStore(cacheKey) as Callback extends false ? T : Callback)
         return true
       }
@@ -113,7 +119,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
 
     emitCache(isCache: boolean, cacheKey: string) {
       const { getStore } = Request.getStoreOption()
-      const cacheData = getStore(cacheKey)
+      const cacheData = getStore && getStore(cacheKey)
       if (isCache && sendToken.get(cacheKey) && cacheData) {
         sendToken.delete(cacheKey)
         this.obSend.emit(cacheKey, cacheData)
