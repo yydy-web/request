@@ -145,9 +145,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
 
     createCancelToken(cacheKey: string, cancelToken: Canceler) {
       this.execCancelToken(cacheKey)
-      setTimeout(() => {
-        cancelTokenMap.set(cacheKey, cancelToken)
-      })
+      cancelTokenMap.set(cacheKey, cancelToken)
     }
 
     withAction<T, Callback = false>(
