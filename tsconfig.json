@@ -11,7 +11,10 @@
     "skipDefaultLibCheck": true,
     "declaration": true,
     "baseUrl": "./",
-    "outDir": "dist"
+    "outDir": "dist",
+    "paths": {
+      "@yy-web/request": ["./src/index.ts"]
+    }
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

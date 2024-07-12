@@ -51,7 +51,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private cancelRepeat = false
 
     static getStoreOption() {
-      return Object.assign({ maxConcurrentNum: 99 }, storeOption)
+      return { maxConcurrentNum: 99, ...storeOption }
     }
 
     static setStore(key: string, data: any) {
@@ -87,7 +87,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     setConfig(config: IAxiosRequestConfig): IRequest {
-      this.config = Object.assign(this.config, config)
+      this.config = { ...this.config, ...config }
       return this
     }
 
