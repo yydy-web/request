@@ -9,30 +9,30 @@ export interface IAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 export interface IRequest {
-  setPath(url: string, loading?: boolean): IRequest
-  setConfig(config: IAxiosRequestConfig): IRequest
-  forceCancelRepeat(): IRequest
-  carry(key: string | number): IRequest
-  withAction<T, Callback = false>(
+  setPath: (url: string, loading?: boolean) => IRequest
+  setConfig: (config: IAxiosRequestConfig) => IRequest
+  forceCancelRepeat: () => IRequest
+  carry: (key: string | number) => IRequest
+  withAction: <T, Callback = false>(
     sendData: any,
     methods: Method,
     callback?: (data: T) => Callback
-  ): Promise<Callback extends false ? T : Callback>
-  get<T, Callback = false>(
+  ) => Promise<Callback extends false ? T : Callback>
+  get: <T, Callback = false>(
     params?: boolean | object,
     cache?: boolean,
     dataCallback?: (data: T) => Callback
-  ): Promise<Callback extends false ? T : Callback>
-  post<T>(data?: object | FormData): Promise<T>
-  put<T>(data?: object): Promise<T>
-  del<T>(params?: object): Promise<T>
-  upload<T>(file: File, data?: object): Promise<T>
-  downLoad(params?: object, methods?: 'post' | 'get', fileName?: string): Promise<void>
+  ) => Promise<Callback extends false ? T : Callback>
+  post: <T>(data?: object | FormData) => Promise<T>
+  put: <T>(data?: object) => Promise<T>
+  del: <T>(params?: object) => Promise<T>
+  upload: <T>(file: File, data?: object) => Promise<T>
+  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
 }
 
 export interface RequestStoreConfig {
-  getStore?: (key: string) => any
-  setStore?: (key: string, data: any) => void
+  getStore?: (key: string) => unknown | undefined
+  setStore?: (key: string, data: unknown) => void
   cancelRepeat?: boolean
   maxConcurrentNum?: number
 }
@@ -100,7 +100,8 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       isCache: boolean,
       cacheKey: string,
       resolve: (value: (Callback extends false ? T : Callback)
-      | PromiseLike<Callback extends false ? T : Callback>) => void) {
+      | PromiseLike<Callback extends false ? T : Callback>) => void,
+    ) {
       const { getStore } = Request.getStoreOption()
       // cacheAction
       if (sendToken.get(cacheKey)) {
@@ -151,7 +152,8 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     withAction<T, Callback = false>(
       sendData: any,
       methods: Method,
-      callback?: (data: T) => Callback): Promise<Callback extends false ? T : Callback> {
+      callback?: (data: T) => Callback,
+    ): Promise<Callback extends false ? T : Callback> {
       const toMethod = methods.toUpperCase()
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
       const url = `${this.path}`.replace(/(\/\/)/g, '/')

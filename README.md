@@ -8,7 +8,7 @@
 - Chain call
 - restful specification
 - Flexible configuration
-  
+
 ## Install
 
 ```bash
@@ -102,16 +102,16 @@ request.setPath('xxxx').downFile(data)
 ## type
 ```ts
 interface IRequest {
-  setPath(url: string, loading?: boolean): IRequest
-  setConfig(config: IAxiosRequestConfig): IRequest
-  forceCancelRepeat(): IRequest
-  carry(key: string | number): IRequest
-  get<T, Callback = false>(params?: boolean | object, cache?: boolean, dataCallback?: (data: T) => Callback): Promise<Callback extends false ? T : Callback>
-  post<T>(data?: object | FormData): Promise<T>
-  put<T>(data?: object): Promise<T>
-  del<T>(params?: object): Promise<T>
-  upload<T>(file: File, data?: object): Promise<T>
-  downLoad(params?: object, methods?: 'post' | 'get', fileName?: string): Promise<unknown>
+  setPath: (url: string, loading?: boolean) => IRequest
+  setConfig: (config: IAxiosRequestConfig) => IRequest
+  forceCancelRepeat: () => IRequest
+  carry: (key: string | number) => IRequest
+  get: <T, Callback = false>(params?: boolean | object, cache?: boolean, dataCallback?: (data: T) => Callback) => Promise<Callback extends false ? T : Callback>
+  post: <T>(data?: object | FormData) => Promise<T>
+  put: <T>(data?: object) => Promise<T>
+  del: <T>(params?: object) => Promise<T>
+  upload: <T>(file: File, data?: object) => Promise<T>
+  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<unknown>
 }
 ```
 

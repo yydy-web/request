@@ -1,20 +1,21 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "esnext",
     "lib": ["ESNext", "DOM"],
-    "moduleResolution": "node",
-    "esModuleInterop": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "skipDefaultLibCheck": true,
-    "declaration": true,
     "baseUrl": "./",
-    "outDir": "dist",
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "@yy-web/request": ["./src/index.ts"]
-    }
+    },
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "strictNullChecks": false,
+    "declaration": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

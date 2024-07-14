@@ -14,7 +14,8 @@ service.interceptors.response.use((response: any) => {
 })
 
 const yyRequest = request(service, {
-  getStore, setStore,
+  getStore,
+  setStore,
 })
 setRequest(yyRequest)
 

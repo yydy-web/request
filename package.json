@@ -1,12 +1,12 @@
 {
   "name": "@yy-web/request",
+  "type": "module",
   "version": "1.5.9",
-  "packageManager": "pnpm@9.5.0",
+  "packageManager": "pnpm@9.5.0+sha256.dbdf5961c32909fb030595a9daa1dae720162e658609a8f92f2fa99835510ca5",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
   "license": "MIT",
   "funding": "https://github.com/a949066041",
-  "type": "module",
   "homepage": "https://github.com/yydy-web",
   "repository": {
     "type": "git",
@@ -20,8 +20,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
     }
   },
   "main": "dist/index.js",
@@ -36,9 +36,13 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
     "release": "bumpp --commit --push --tag",
     "test": "vitest",
-    "lint": "eslint .",
+    "lint": "eslint . --fix",
     "coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
+  },
+  "dependencies": {
+    "@vitest/ui": "^2.0.2",
+    "msw": "^2.3.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^2.22.0",
@@ -50,8 +54,5 @@
     "tsup": "^8.1.0",
     "typescript": "^5.5.3",
     "vitest": "^2.0.2"
-  },
-  "dependencies": {
-    "@vitest/ui": "^2.0.2"
   }
 }

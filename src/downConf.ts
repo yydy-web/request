@@ -2,7 +2,7 @@ import type { AxiosResponse } from 'axios'
 import type { IAxiosRequestConfig } from './request'
 
 export function fileInterceptorsResponseConfig(response: AxiosResponse, errorLoad?: (err: string) => void):
-{ isFile: boolean; value: any[] | AxiosResponse } {
+{ isFile: boolean, value: any[] | AxiosResponse } {
   const config = response.config as IAxiosRequestConfig
   if (config.isFile) {
     if (response.data.type === 'application/json') {
