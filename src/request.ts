@@ -156,7 +156,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     ): Promise<Callback extends false ? T : Callback> {
       const toMethod = methods.toUpperCase()
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
-      const url = `${this.path}`.replace(/(\/\/)/g, '/')
+      const url = `${this.path}`.replace(/\/\//g, '/')
       const cacheKey = `${url}${methods.toUpperCase()}${JSON.stringify(sendData)}`
       const isCache = !!(this.config.cache && toMethod === 'GET')
       return new Promise((resolve, reject) => {
@@ -242,7 +242,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         this.withAction<[File, AxiosRequestHeaders]>(params, methods || 'get').then(([file, config]) => {
           const blob = new Blob([file])
           fileName = fileName || decodeURIComponent(config['content-disposition'] as string).slice(20)
-          if ('download' in document.createElement('a')) {
+          if (window && document && 'download' in document.createElement('a')) {
             // 非IE下载
             const eLink = document.createElement('a')
             eLink.download = fileName

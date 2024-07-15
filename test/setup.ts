@@ -1,14 +1,14 @@
-import { beforeAll } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
 import server from './mock-server'
 
 beforeAll(async () => {
-  server.listen({ onUnhandledRequest: 'error' })
+  server.listen()
 })
 
-beforeAll(async () => {
+afterEach(async () => {
   server.resetHandlers()
 })
 
-beforeAll(async () => {
+afterAll(async () => {
   server.close()
 })

@@ -1,7 +1,6 @@
-import axios from 'axios'
 import { describe, expect, it, vi } from 'vitest'
-import { getStore, setRequest, setStore } from '@yy-web/request'
-import request from '../src'
+import request, { getStore, setRequest, setStore } from '@yy-web/request'
+import axiosInstance from './request'
 
 describe('store', () => {
   it('getStore', () => {
@@ -13,18 +12,14 @@ describe('store', () => {
   })
 
   it ('setStore', async () => {
-    const instance = axios.create({
-      baseURL: '/',
-    })
-
-    const yyRequest = request(instance, { getStore, setStore })
+    const yyRequest = request(axiosInstance, { getStore, setStore })
 
     setRequest(yyRequest)
 
-    const value = await vi.waitFor(async () => {
-      return await yyRequest.setPath('user').get(true)
+    await vi.waitFor(async () => {
+      return await yyRequest.setPath('/test').get(true)
     })
 
-    expect(value).toBe('1')
+    expect(getStore(`/testGET{}`)).toBe('Hello World!')
   })
 })

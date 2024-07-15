@@ -1,8 +1,8 @@
-import axios from 'axios'
 import request, { getRequest, setRequest } from '@yy-web/request'
 import { describe, expect, it } from 'vitest'
+import axiosInstance from './request'
 
-describe('request instance ', () => {
+describe('request var instance ', () => {
   it ('get error request', () => {
     const request = getRequest()
 
@@ -10,10 +10,6 @@ describe('request instance ', () => {
   })
 
   it('set request', () => {
-    const axiosInstance = axios.create({
-      url: 'http://localhost:8080/',
-    })
-
     const yyRequest = request(axiosInstance)
     setRequest(yyRequest)
     const yyRequestInstance = getRequest()
