@@ -16,4 +16,11 @@ describe('request var instance ', () => {
 
     expect(yyRequestInstance).toBe(getRequest())
   })
+
+  it ('get instance', () => {
+    const yyRequest = request(axiosInstance)
+    const yyRequest2 = request(axiosInstance)
+
+    expect(yyRequest).toEqual(yyRequest2)
+  })
 })

@@ -1,3 +1,4 @@
+import { URL } from 'node:url'
 import { HttpResponse, http } from 'msw'
 import { setupServer } from 'msw/node'
 
@@ -11,14 +12,36 @@ const server = setupServer(
     return HttpResponse.json(Array.from(value))
   }),
 
+  http.get('/test/get', ({ request }) => {
+    const url = new URL(request.url)
+    const id = url.searchParams.get('id')
+    return HttpResponse.json({ id })
+  }),
+
   http.get('/test/:id', ({ params }) => {
     const { id } = params
     return HttpResponse.text(id as string)
   }),
 
   http.post('/test/save', async (req) => {
-    const formData = await req.request.formData()
-    return HttpResponse.text(formData.get('username') === 'admin' ? '200' : '204')
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const requestBody: Record<string, any> = await req.request.json()
+    return HttpResponse.text(requestBody.username === 'admin' ? '200' : '204')
+  }),
+
+  http.put('/test/put/:id', async ({ }) => {
+    return HttpResponse.json(true)
+  }),
+
+  http.delete('/test/del/:id', async ({ params }) => {
+    const { id } = params
+
+    return HttpResponse.json(id)
+  }),
+
+  http.get('/test/cache/1', () => {
+    return HttpResponse.text('Hello World!')
   }),
 )
 

@@ -1,6 +1,7 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Canceler, Method } from 'axios'
 import axios from 'axios'
 import { Publisher } from './mitt'
+import { clearStore } from './cache'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
   loading?: boolean
@@ -28,6 +29,7 @@ export interface IRequest {
   del: <T>(params?: object) => Promise<T>
   upload: <T>(file: File, data?: object) => Promise<T>
   downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
+  clear: () => void
 }
 
 export interface RequestStoreConfig {
@@ -77,6 +79,11 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       return Request.instance
     }
 
+    clear() {
+      Request.instance = null
+      clearStore()
+    }
+
     setPath(url: string, loading = false): IRequest {
       this.path = url
       this.config = {}
@@ -102,7 +109,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       resolve: (value: (Callback extends false ? T : Callback)
       | PromiseLike<Callback extends false ? T : Callback>) => void,
     ) {
-      const { getStore } = Request.getStoreOption()
+      const getStore = Request.getStore
       // cacheAction
       if (sendToken.get(cacheKey)) {
         this.obSend.once(cacheKey, resolve as any)
@@ -128,10 +135,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     carry(key: string | number) {
-      if (!this.path) {
-        this.path = ''
-        throw new Error('yydy-web: request url set error')
-      }
       this.path = this.path.replace(/\{.*?\}/g, () => `${key}`)
       return this
     }
