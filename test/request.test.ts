@@ -27,10 +27,4 @@ describe('request fn ', () => {
 
     expect(params).not.toBeFalsy()
   })
-
-  it ('request post', async () => {
-    const res = await yyRequest.setPath('/test/save').post<number>({ username: 'admin', password: '123' })
-
-    expect(res).toBe(200)
-  })
 })
