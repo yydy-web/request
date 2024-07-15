@@ -36,7 +36,7 @@
     "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
     "release": "bumpp --commit --push --tag",
     "test": "vitest",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "coverage": "vitest run --coverage",
     "test:ui": "vitest --ui"
   },
