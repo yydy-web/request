@@ -10,12 +10,12 @@
     },
     "resolveJsonModule": true,
     "strict": true,
-    "skipLibCheck": true,
     "strictNullChecks": false,
     "declaration": true,
     "outDir": "dist",
     "esModuleInterop": true,
-    "skipDefaultLibCheck": true
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
   },
   "include": ["./src"],
   "exclude": ["node_modules"]

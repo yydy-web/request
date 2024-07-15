@@ -188,7 +188,9 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
               requestPool.delete(action)
               cancelTokenMap.delete(cacheKey)
               const next = waitQueue.shift()
-              next && requestPool.add(next)
+              if (next) {
+                requestPool.add(next)
+              }
               setTimeout(() => {
                 next?.()
               })

@@ -62,7 +62,7 @@ request.setPath('xxxx/{id}').carry(id) // -> request.setPath('xxxx/1')
 ```
 
 - downfile
-```js
+```ts
 import axios from 'axios'
 import request, { fileInterceptorsResponseConfig, setRequest } from '@yy-web/request'
 

@@ -10,7 +10,7 @@ export function fileInterceptorsResponseConfig(response: AxiosResponse, errorLoa
       reader.readAsText(response.data, 'utf-8')
       reader.onload = function () {
         const errorMsg = JSON.parse(reader.result as string).subMsg
-        typeof errorLoad === 'function' && errorLoad(errorMsg)
+        errorLoad?.(errorMsg)
       }
       return {
         isFile: false,
