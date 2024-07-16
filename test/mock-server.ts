@@ -1,4 +1,6 @@
 import { URL } from 'node:url'
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import { HttpResponse, http } from 'msw'
 import { setupServer } from 'msw/node'
 
@@ -49,7 +51,19 @@ const server = setupServer(
   }),
 
   http.get('/test/downFile', () => {
-    return HttpResponse.json({ err: true })
+    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
+    return new Response(imageBuffer, {
+      status: 200,
+      headers: {
+        'Content-Length': imageBuffer.byteLength.toString(),
+        'Content-Type': 'application/octet-stream',
+      },
+    })
+  }),
+
+  http.get('/test/down/error', () => {
+    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
+    return HttpResponse.json({ error: 'test' })
   }),
 )
 

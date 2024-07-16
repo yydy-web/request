@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import request, { dataToFormData, setRequest } from '@yy-web/request'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import axiosInstance from './request'
 
 describe('request fn ', () => {
@@ -82,9 +82,34 @@ describe('request fn ', () => {
     expect(body.isFile).toBeDefined()
   })
 
-  it.skip ('request base down file', async () => {
-    const body = await yyRequest.setPath('/test/downFile').downLoad()
+  it ('request params upload', async () => {
+    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const body = await yyRequest.setPath('/test/upload').upload<{ isFile: unknown }>(new File(imageBuffer, 'file.png'), { test: '1' })
 
-    expect(body).toBeDefined()
+    expect(body.isFile).toBeDefined()
+  })
+
+  it ('request base down file', async () => {
+    // eslint-disable-next-line no-restricted-globals
+    ;((global as any).URL.createObjectURL) = vi.fn(() => 'details')
+    // eslint-disable-next-line no-restricted-globals
+    ;((global as any).URL.revokeObjectURL) = vi.fn(() => 'details')
+
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    window.navigator.msSaveBlob = vi.fn(() => 'details')
+    await yyRequest.setPath('/test/downFile').downLoad()
+
+    expect(URL.createObjectURL).toBeCalled()
+    expect(URL.revokeObjectURL).toBeCalled()
+  })
+
+  it ('request base down error file', async () => {
+    const errorCatch = vi.fn()
+    await yyRequest.setPath('/test/down/error').downLoad().catch(errorCatch)
+
+    expect(errorCatch).toBeCalled()
   })
 })

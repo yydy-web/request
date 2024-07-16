@@ -244,12 +244,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
             URL.revokeObjectURL(eLink.href)
             document.body.removeChild(eLink)
           }
-          else {
-            // IE10+下载
-            const nav = window.navigator as any
-            if (nav.msSaveBlob)
-              nav.msSaveBlob(blob, fileName)
-          }
           resolve()
         }).catch(reject)
       })
