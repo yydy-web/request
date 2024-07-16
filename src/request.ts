@@ -56,22 +56,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       return { maxConcurrentNum: 99, ...storeOption }
     }
 
-    static setStore(key: string, data: any) {
-      const { setStore } = Request.getStoreOption()
-      if (!setStore)
-        return
-
-      return setStore(key, data)
-    }
-
-    static getStore(key: string) {
-      const { getStore } = Request.getStoreOption()
-      if (!getStore)
-        return
-
-      return getStore(key)
-    }
-
     static getInstance() {
       if (!Request.instance)
         Request.instance = new Request()
@@ -109,7 +93,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       resolve: (value: (Callback extends false ? T : Callback)
       | PromiseLike<Callback extends false ? T : Callback>) => void,
     ) {
-      const getStore = Request.getStore
+      const { getStore } = Request.getStoreOption()
       // cacheAction
       if (sendToken.get(cacheKey)) {
         this.obSend.once(cacheKey, resolve as any)
@@ -161,12 +145,13 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
       const url = `${this.path}`.replace(/\/\//g, '/')
       const cacheKey = `${url}${methods.toUpperCase()}${JSON.stringify(sendData)}`
-      const isCache = !!(this.config.cache && toMethod === 'GET')
+      const { getStore, setStore, maxConcurrentNum } = Request.getStoreOption()
+      const isCache = !!(this.config.cache && toMethod === 'GET' && getStore && setStore)
       return new Promise((resolve, reject) => {
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
-        const isOverflow = requestPool.size >= Request.getStoreOption().maxConcurrentNum
+        const isOverflow = requestPool.size >= maxConcurrentNum
         this.execCancelToken(url)
         const action = () => {
           service({
@@ -182,7 +167,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
             .then((data: any) => {
               const withData = typeof callback === 'function' ? callback(data) : data
               if (isCache)
-                Request.setStore(cacheKey, withData)
+                setStore?.(cacheKey, withData)
 
               resolve(withData)
             })
@@ -197,7 +182,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
               setTimeout(() => {
                 next?.()
               })
-              if (!storeOption)
+              if (!setStore && !getStore)
                 return
               this.emitCache(isCache, cacheKey)
             })

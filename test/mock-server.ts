@@ -23,6 +23,10 @@ const server = setupServer(
     return HttpResponse.text(id as string)
   }),
 
+  http.post('/test/upload', async () => {
+    return HttpResponse.json({ isFile: true })
+  }),
+
   http.post('/test/save', async (req) => {
     // eslint-disable-next-line ts/ban-ts-comment
     // @ts-expect-error
@@ -30,7 +34,7 @@ const server = setupServer(
     return HttpResponse.text(requestBody.username === 'admin' ? '200' : '204')
   }),
 
-  http.put('/test/put/:id', async ({ }) => {
+  http.put('/test/put/:id', async () => {
     return HttpResponse.json(true)
   }),
 
@@ -42,6 +46,10 @@ const server = setupServer(
 
   http.get('/test/cache/1', () => {
     return HttpResponse.text('Hello World!')
+  }),
+
+  http.get('/test/downFile', () => {
+    return HttpResponse.json({ err: true })
   }),
 )
 

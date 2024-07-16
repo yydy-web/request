@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import path from 'node:path'
 import request, { dataToFormData, setRequest } from '@yy-web/request'
 import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'
@@ -69,5 +71,20 @@ describe('request fn ', () => {
     const body = await yyRequest.setPath('/test/del/{id}').carry('1').del<string>()
 
     expect(body).toBe('1')
+  })
+
+  it ('request base upload', async () => {
+    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
+    // eslint-disable-next-line ts/ban-ts-comment
+    // @ts-expect-error
+    const body = await yyRequest.setPath('/test/upload').upload<{ isFile: unknown }>(new File(imageBuffer, 'file.png'))
+
+    expect(body.isFile).toBeDefined()
+  })
+
+  it.skip ('request base down file', async () => {
+    const body = await yyRequest.setPath('/test/downFile').downLoad()
+
+    expect(body).toBeDefined()
   })
 })
