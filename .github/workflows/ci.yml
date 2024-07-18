@@ -3,11 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - feat/test
+      - main
 
   pull_request:
     branches:
-      - feat/test
+      - main
 
 jobs:
   lint:

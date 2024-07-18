@@ -62,7 +62,6 @@ const server = setupServer(
   }),
 
   http.get('/test/down/error', () => {
-    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
     return HttpResponse.json({ error: 'test' })
   }),
 )

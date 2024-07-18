@@ -9,14 +9,14 @@
       "@yy-web/request": ["./src/index.ts"]
     },
     "resolveJsonModule": true,
+    "types": ["vitest/globals"],
     "strict": true,
     "strictNullChecks": false,
     "declaration": true,
     "outDir": "dist",
     "esModuleInterop": true,
     "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "types": ["vitest/globals"]
+    "skipLibCheck": true
   },
   "include": ["./src"],
   "exclude": ["node_modules"]
