@@ -1,6 +1,7 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Canceler, Method } from 'axios'
 import axios from 'axios'
 import { Publisher } from './mitt'
+import { clearStore } from './cache'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
   loading?: boolean
@@ -9,30 +10,31 @@ export interface IAxiosRequestConfig extends AxiosRequestConfig {
 }
 
 export interface IRequest {
-  setPath(url: string, loading?: boolean): IRequest
-  setConfig(config: IAxiosRequestConfig): IRequest
-  forceCancelRepeat(): IRequest
-  carry(key: string | number): IRequest
-  withAction<T, Callback = false>(
+  setPath: (url: string, loading?: boolean) => IRequest
+  setConfig: (config: IAxiosRequestConfig) => IRequest
+  forceCancelRepeat: () => IRequest
+  carry: (key: string | number) => IRequest
+  withAction: <T, Callback = false>(
     sendData: any,
     methods: Method,
     callback?: (data: T) => Callback
-  ): Promise<Callback extends false ? T : Callback>
-  get<T, Callback = false>(
+  ) => Promise<Callback extends false ? T : Callback>
+  get: <T, Callback = false>(
     params?: boolean | object,
     cache?: boolean,
     dataCallback?: (data: T) => Callback
-  ): Promise<Callback extends false ? T : Callback>
-  post<T>(data?: object | FormData): Promise<T>
-  put<T>(data?: object): Promise<T>
-  del<T>(params?: object): Promise<T>
-  upload<T>(file: File, data?: object): Promise<T>
-  downLoad(params?: object, methods?: 'post' | 'get', fileName?: string): Promise<void>
+  ) => Promise<Callback extends false ? T : Callback>
+  post: <T>(data?: object | FormData) => Promise<T>
+  put: <T>(data?: object) => Promise<T>
+  del: <T>(params?: object) => Promise<T>
+  upload: <T>(file: File, data?: object) => Promise<T>
+  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
+  clear: () => void
 }
 
 export interface RequestStoreConfig {
-  getStore?: (key: string) => any
-  setStore?: (key: string, data: any) => void
+  getStore?: (key: string) => unknown | undefined
+  setStore?: (key: string, data: unknown) => void
   cancelRepeat?: boolean
   maxConcurrentNum?: number
 }
@@ -51,23 +53,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     private cancelRepeat = false
 
     static getStoreOption() {
-      return Object.assign({ maxConcurrentNum: 99 }, storeOption)
-    }
-
-    static setStore(key: string, data: any) {
-      const { setStore } = Request.getStoreOption()
-      if (!setStore)
-        return
-
-      return setStore(key, data)
-    }
-
-    static getStore(key: string) {
-      const { getStore } = Request.getStoreOption()
-      if (!getStore)
-        return
-
-      return getStore(key)
+      return { maxConcurrentNum: 99, ...storeOption }
     }
 
     static getInstance() {
@@ -75,6 +61,11 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         Request.instance = new Request()
 
       return Request.instance
+    }
+
+    clear() {
+      Request.instance = null
+      clearStore()
     }
 
     setPath(url: string, loading = false): IRequest {
@@ -87,7 +78,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     setConfig(config: IAxiosRequestConfig): IRequest {
-      this.config = Object.assign(this.config, config)
+      this.config = { ...this.config, ...config }
       return this
     }
 
@@ -100,7 +91,8 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       isCache: boolean,
       cacheKey: string,
       resolve: (value: (Callback extends false ? T : Callback)
-      | PromiseLike<Callback extends false ? T : Callback>) => void) {
+      | PromiseLike<Callback extends false ? T : Callback>) => void,
+    ) {
       const { getStore } = Request.getStoreOption()
       // cacheAction
       if (sendToken.get(cacheKey)) {
@@ -127,10 +119,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     }
 
     carry(key: string | number) {
-      if (!this.path) {
-        this.path = ''
-        throw new Error('yydy-web: request url set error')
-      }
       this.path = this.path.replace(/\{.*?\}/g, () => `${key}`)
       return this
     }
@@ -151,17 +139,19 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
     withAction<T, Callback = false>(
       sendData: any,
       methods: Method,
-      callback?: (data: T) => Callback): Promise<Callback extends false ? T : Callback> {
+      callback?: (data: T) => Callback,
+    ): Promise<Callback extends false ? T : Callback> {
       const toMethod = methods.toUpperCase()
       const isSendData = ['POST', 'PUT', 'DELETE'].includes(toMethod)
-      const url = `${this.path}`.replace(/(\/\/)/g, '/')
+      const url = `${this.path}`.replace(/\/\//g, '/')
       const cacheKey = `${url}${methods.toUpperCase()}${JSON.stringify(sendData)}`
-      const isCache = !!(this.config.cache && toMethod === 'GET')
+      const { getStore, setStore, maxConcurrentNum } = Request.getStoreOption()
+      const isCache = !!(this.config.cache && toMethod === 'GET' && getStore && setStore)
       return new Promise((resolve, reject) => {
         if (this.withCacheAction(isCache, cacheKey, resolve))
           return
 
-        const isOverflow = requestPool.size >= Request.getStoreOption().maxConcurrentNum
+        const isOverflow = requestPool.size >= maxConcurrentNum
         this.execCancelToken(url)
         const action = () => {
           service({
@@ -177,7 +167,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
             .then((data: any) => {
               const withData = typeof callback === 'function' ? callback(data) : data
               if (isCache)
-                Request.setStore(cacheKey, withData)
+                setStore?.(cacheKey, withData)
 
               resolve(withData)
             })
@@ -186,11 +176,13 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
               requestPool.delete(action)
               cancelTokenMap.delete(cacheKey)
               const next = waitQueue.shift()
-              next && requestPool.add(next)
+              if (next) {
+                requestPool.add(next)
+              }
               setTimeout(() => {
                 next?.()
               })
-              if (!storeOption)
+              if (!setStore && !getStore)
                 return
               this.emitCache(isCache, cacheKey)
             })
@@ -240,7 +232,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
         this.withAction<[File, AxiosRequestHeaders]>(params, methods || 'get').then(([file, config]) => {
           const blob = new Blob([file])
           fileName = fileName || decodeURIComponent(config['content-disposition'] as string).slice(20)
-          if ('download' in document.createElement('a')) {
+          if (window && document && 'download' in document.createElement('a')) {
             // 非IE下载
             const eLink = document.createElement('a')
             eLink.download = fileName
@@ -251,12 +243,6 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
             // 释放URL 对象
             URL.revokeObjectURL(eLink.href)
             document.body.removeChild(eLink)
-          }
-          else {
-            // IE10+下载
-            const nav = window.navigator as any
-            if (nav.msSaveBlob)
-              nav.msSaveBlob(blob, fileName)
           }
           resolve()
         }).catch(reject)

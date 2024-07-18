@@ -9,3 +9,7 @@ export const setStore: RequestStoreConfig['setStore'] = (key: string, data: any)
 export const getStore: RequestStoreConfig['getStore'] = (key: string) => {
   return cacheKeys.get(key) || undefined
 }
+
+export function clearStore() {
+  cacheKeys.clear()
+}
