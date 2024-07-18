@@ -9,5 +9,5 @@ export function setRequest(requestFn: IRequest) {
 export function getRequest() {
   if (!request)
     console.error('[yy-web:error]: not found request of @yy-web/request')
-  return request;
+  return request
 }
