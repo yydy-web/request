@@ -1,9 +1,9 @@
-name: autofix.ci  # needed to securely identify the workflow
+name: autofix.ci # needed to securely identify the workflow
 
 on:
   pull_request:
   push:
-    branches: [ "main" ]
+    branches: [main]
 permissions:
   contents: read
 
@@ -12,11 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js lts/*
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
-          node-version: lts/*
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
 
       - name: Setup
         run: npm i -g @antfu/ni
