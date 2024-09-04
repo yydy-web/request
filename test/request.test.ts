@@ -47,10 +47,9 @@ describe('request fn ', () => {
   })
 
   it ('request change request', async () => {
-    const value = await yyRequest.setPath('/test/get')
-      .get<{ id: string }, { id: string }>({ id: '1' }, false, (res) => {
-        return { id: `${res.id}test` }
-      })
+    const value = await yyRequest.setPath('/test/get').get<{ id: string }, { id: string }>({ id: '1' }, false, (res) => {
+      return { id: `${res.id}test` }
+    })
 
     expect(value).toEqual({ id: '1test' })
   })
