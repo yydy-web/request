@@ -46,7 +46,7 @@
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.22.2",
+    "@antfu/eslint-config": "^3.2.0",
     "@types/node": "^20.14.10",
     "@vitest/browser": "^2.0.2",
     "@vitest/coverage-istanbul": "^2.0.2",
