@@ -1,5 +1,3 @@
 export * from './cache'
-export * from './downConf'
-export * from './request'
 export * from './request'
 export * from './var'

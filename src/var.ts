@@ -1,8 +1,8 @@
-import type { IRequest } from './request'
+import type Request from './request/instance'
 
-let request: IRequest | null = null
+let request: Request | null = null
 
-export function setRequest(requestFn: IRequest) {
+export function setRequest(requestFn: Request) {
   request = requestFn
 }
 

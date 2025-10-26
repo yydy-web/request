@@ -17,8 +17,8 @@ npm i @yy-web/request
 
 ```js
 // request.ts
-import axios from 'axios'
 import request, { setRequest } from '@yy-web/request'
+import axios from 'axios'
 
 const service = axios.create({
   baseURL: '/api',
@@ -63,8 +63,8 @@ request.setPath('xxxx/{id}').carry(id) // -> request.setPath('xxxx/1')
 
 - downfile
 ```ts
-import axios from 'axios'
 import request, { fileInterceptorsResponseConfig, setRequest } from '@yy-web/request'
+import axios from 'axios'
 
 const service = axios.create({
   baseURL: '/api',
