@@ -2,7 +2,7 @@
   "name": "@yy-web/request",
   "type": "module",
   "version": "1.5.9",
-  "packageManager": "pnpm@9.5.0+sha256.dbdf5961c32909fb030595a9daa1dae720162e658609a8f92f2fa99835510ca5",
+  "packageManager": "pnpm@10.19.0",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
   "license": "MIT",
@@ -33,7 +33,7 @@
   "scripts": {
     "prepublishOnly": "pnpm run build",
     "dev": "pnpm run build --watch",
-    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
+    "build": "tsdown src/index.ts --format cjs,esm --dts --no-splitting --config tsdown.json",
     "release": "bumpp --commit --push --tag",
     "test": "vitest",
     "lint": "eslint .",
@@ -41,21 +41,21 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@vitest/ui": "^2.0.2",
-    "msw": "^2.3.1",
+    "@vitest/ui": "^4.0.3",
+    "msw": "^2.11.6",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.22.2",
-    "@types/node": "^20.14.10",
-    "@vitest/browser": "^2.0.2",
-    "@vitest/coverage-istanbul": "^2.0.2",
-    "axios": "^1.7.2",
-    "bumpp": "^9.4.1",
-    "eslint": "^9.7.0",
-    "jsdom": "^24.1.0",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "@antfu/eslint-config": "^6.1.0",
+    "@types/node": "^20.19.23",
+    "@vitest/browser": "^4.0.3",
+    "@vitest/coverage-istanbul": "^4.0.3",
+    "axios": "^1.12.2",
+    "bumpp": "^10.3.1",
+    "eslint": "^9.38.0",
+    "jsdom": "^27.0.1",
+    "tsdown": "^0.15.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.3"
   }
 }

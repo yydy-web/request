@@ -1,4 +1,4 @@
-type EventCallback = (...args: any[]) => void
+type EventCallback = (...args: unknown[]) => void
 
 export class Publisher {
   private events: Record<string, EventCallback[]> = {}
@@ -12,7 +12,7 @@ export class Publisher {
   }
 
   // 发布事件
-  emit(event: string, ...args: any[]): void {
+  emit(event: string, ...args: unknown[]): void {
     const callbacks = this.events[event]
     if (callbacks) {
       for (const callback of callbacks)

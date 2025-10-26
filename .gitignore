@@ -79,3 +79,7 @@ dist
 
 # IDE
 .idea
+
+# folder alias
+folder-alias.json
+private-folder-alias.json

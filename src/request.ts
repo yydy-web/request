@@ -1,7 +1,7 @@
 import type { AxiosInstance, AxiosRequestConfig, AxiosRequestHeaders, Canceler, Method } from 'axios'
 import axios from 'axios'
-import { Publisher } from './mitt'
 import { clearStore } from './cache'
+import { Publisher } from './mitt'
 
 export interface IAxiosRequestConfig extends AxiosRequestConfig {
   loading?: boolean
@@ -17,12 +17,12 @@ export interface IRequest {
   withAction: <T, Callback = false>(
     sendData: any,
     methods: Method,
-    callback?: (data: T) => Callback
+    callback?: (data: T) => Callback,
   ) => Promise<Callback extends false ? T : Callback>
   get: <T, Callback = false>(
     params?: boolean | object,
     cache?: boolean,
-    dataCallback?: (data: T) => Callback
+    dataCallback?: (data: T) => Callback,
   ) => Promise<Callback extends false ? T : Callback>
   post: <T>(data?: object | FormData) => Promise<T>
   put: <T>(data?: object) => Promise<T>
@@ -91,7 +91,7 @@ export default function (service: AxiosInstance, storeOption?: RequestStoreConfi
       isCache: boolean,
       cacheKey: string,
       resolve: (value: (Callback extends false ? T : Callback)
-      | PromiseLike<Callback extends false ? T : Callback>) => void,
+        | PromiseLike<Callback extends false ? T : Callback>) => void,
     ) {
       const { getStore } = Request.getStoreOption()
       // cacheAction

@@ -1,8 +1,8 @@
-import type { RequestStoreConfig } from './request'
+import type { RequestStoreConfig } from './request/index'
 
-const cacheKeys: Map<string, any> = new Map()
+const cacheKeys: Map<string, unknown> = new Map()
 
-export const setStore: RequestStoreConfig['setStore'] = (key: string, data: any) => {
+export const setStore: RequestStoreConfig['setStore'] = (key: string, data: unknown) => {
   cacheKeys.set(key, data)
 }
 
