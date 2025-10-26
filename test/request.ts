@@ -1,5 +1,5 @@
-import axios from 'axios'
 import { fileInterceptorsResponseConfig } from '@yy-web/request'
+import axios from 'axios'
 
 const axiosInstance = axios.create({
   url: '/',

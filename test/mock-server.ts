@@ -1,7 +1,7 @@
-import { URL } from 'node:url'
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { HttpResponse, http } from 'msw'
+import { URL } from 'node:url'
+import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
 const server = setupServer(

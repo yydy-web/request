@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest'
 import request, { getStore, setRequest } from '@yy-web/request'
+import { describe, expect, it, vi } from 'vitest'
 import axiosInstance from './request'
 
 describe('store', () => {
