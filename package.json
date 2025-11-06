@@ -2,7 +2,7 @@
   "name": "@yy-web/request",
   "type": "module",
   "version": "1.5.9",
-  "packageManager": "pnpm@10.19.0",
+  "packageManager": "pnpm@10.20.0",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
   "license": "MIT",
@@ -41,21 +41,21 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@vitest/ui": "^4.0.3",
-    "msw": "^2.11.6",
+    "@vitest/ui": "^4.0.7",
+    "msw": "^2.12.0",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^6.1.0",
-    "@types/node": "^20.19.23",
-    "@vitest/browser": "^4.0.3",
-    "@vitest/coverage-istanbul": "^4.0.3",
-    "axios": "^1.12.2",
+    "@antfu/eslint-config": "^6.2.0",
+    "@types/node": "^22.19.0",
+    "@vitest/browser": "^4.0.7",
+    "@vitest/coverage-istanbul": "^4.0.7",
+    "axios": "^1.13.2",
     "bumpp": "^10.3.1",
-    "eslint": "^9.38.0",
-    "jsdom": "^27.0.1",
-    "tsdown": "^0.15.10",
+    "eslint": "^9.39.1",
+    "jsdom": "^27.1.0",
+    "tsdown": "^0.16.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.3"
+    "vitest": "^4.0.7"
   }
 }
