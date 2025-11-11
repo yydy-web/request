@@ -1,4 +1,3 @@
-import { fileInterceptorsResponseConfig } from '@yy-web/request'
 import axios from 'axios'
 
 const axiosInstance = axios.create({
@@ -6,10 +5,6 @@ const axiosInstance = axios.create({
 })
 
 axiosInstance.interceptors.response.use((data) => {
-  const { isFile, value } = fileInterceptorsResponseConfig(data)
-  if (isFile) {
-    return value
-  }
   return data.data
 })
 

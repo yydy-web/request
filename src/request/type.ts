@@ -30,9 +30,11 @@ export interface IRequest {
 }
 
 export interface RequestConfig {
-  getStore?: (key: string) => unknown | undefined
+  getStore?: ((key: string) => unknown)
   setStore?: (key: string, data: unknown) => void
   clearStore?: () => void
   cancelRepeat?: boolean
   maxConcurrentNum?: number
 }
+
+export type RequireRquestConfig = Required<RequestConfig>

@@ -1,4 +1,4 @@
-import type Request from './request/instance'
+import type { Request } from './request'
 
 let request: Request | null = null
 

@@ -1,15 +1,15 @@
-import request, { getStore, setRequest } from '@yy-web/request'
+import { getStore, Request, setRequest } from '@yy-web/request'
 import { describe, expect, it, vi } from 'vitest'
 import axiosInstance from './request'
 
 describe('store', () => {
   it ('no set cache', async () => {
-    const yyRequest = request(axiosInstance, { getStore: undefined, setStore: undefined })
+    const requestInstance = Request.getInstance(axiosInstance, { getStore: undefined, setStore: undefined })
 
-    setRequest(yyRequest)
+    setRequest(requestInstance)
 
     await vi.waitFor(async () => {
-      return await yyRequest.setPath('/test').get(true)
+      return await requestInstance.setPath('/test').get(true)
     })
 
     expect(getStore(`/testGET{}`)).toBeUndefined()

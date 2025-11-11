@@ -10,8 +10,7 @@ const server = setupServer(
   }),
 
   http.post('/data-form', async ({ request }) => {
-    const value = await request.formData()
-    return HttpResponse.json(Array.from(value))
+    return HttpResponse.json(await request.clone().json())
   }),
 
   http.get('/test/get', ({ request }) => {
@@ -30,9 +29,7 @@ const server = setupServer(
   }),
 
   http.post('/test/save', async (req) => {
-    // eslint-disable-next-line ts/ban-ts-comment
-    // @ts-expect-error
-    const requestBody: Record<string, any> = await req.request.json()
+    const requestBody = await req.request.json() as Record<string, any>
     return HttpResponse.text(requestBody.username === 'admin' ? '200' : '204')
   }),
 
@@ -42,7 +39,6 @@ const server = setupServer(
 
   http.delete('/test/del/:id', async ({ params }) => {
     const { id } = params
-
     return HttpResponse.json(id)
   }),
 

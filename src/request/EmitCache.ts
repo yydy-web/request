@@ -1,6 +1,6 @@
 import type { RequestConfig } from './type'
 import { clearStore, getStore, setStore } from '../cache'
-import { Publisher } from '../mitt'
+import { Publisher } from './Publisher'
 
 export type EmitCacheOptions = Pick<RequestConfig, 'getStore' | 'setStore' | 'clearStore'>
 

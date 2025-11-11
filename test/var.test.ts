@@ -1,4 +1,4 @@
-import request, { getRequest, setRequest } from '@yy-web/request'
+import { getRequest, RequestFactory, setRequest } from '@yy-web/request'
 import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'
 
@@ -10,17 +10,15 @@ describe('request var instance ', () => {
   })
 
   it('set request', () => {
-    const yyRequest = request(axiosInstance)
+    const yyRequest = RequestFactory(axiosInstance)
     setRequest(yyRequest)
     const yyRequestInstance = getRequest()
-
     expect(yyRequestInstance).toBe(getRequest())
   })
 
   it ('get instance', () => {
-    const yyRequest = request(axiosInstance)
-    const yyRequest2 = request(axiosInstance)
-
-    expect(yyRequest).toEqual(yyRequest2)
+    const yyRequest = RequestFactory(axiosInstance)
+    const yyRequest2 = RequestFactory(axiosInstance)
+    expect(yyRequest).toBe(yyRequest2)
   })
 })

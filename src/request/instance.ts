@@ -4,8 +4,8 @@ import axios from 'axios'
 import EmitCache from './EmitCache'
 import WaitQueue from './WaitQueue'
 
-export default class Request implements IRequest {
-  static instance: IRequest | null = null
+export class Request implements IRequest {
+  static instance: Request | null = null
   private axiosInstance: AxiosInstance
 
   private emitCacheInstance: EmitCache
@@ -18,13 +18,12 @@ export default class Request implements IRequest {
   private cancelRepeat = false
   private cancelTokenMap: Map<string, Canceler>
 
-  constructor(service: AxiosInstance, options?: RequestConfig) {
+  constructor(service: AxiosInstance, options: RequestConfig = {}) {
     this.axiosInstance = service
     this.options = options
 
     this.emitCacheInstance = new EmitCache(options)
     this.waitQueneInstance = new WaitQueue(this.options?.maxConcurrentNum)
-
     this.cancelTokenMap = new Map<string, Canceler>()
   }
 
@@ -125,7 +124,7 @@ export default class Request implements IRequest {
     })
   }
 
-  get<T, Callback = unknown>(params?: boolean | object, cache = false, dataCallback?: (data: T) => Callback) {
+  get<T, Callback = unknown>(params?: boolean | unknown, cache = false, dataCallback?: (data: T) => Callback) {
     if (typeof params === 'boolean') {
       cache = params
       params = {}
@@ -134,19 +133,19 @@ export default class Request implements IRequest {
     return this.withAction<T, Callback>(params, 'GET', dataCallback)
   }
 
-  post<T>(data?: object | FormData) {
+  post<T>(data?: unknown | FormData) {
     return this.withAction<T>(data, 'post')
   }
 
-  put<T>(data?: object) {
+  put<T>(data?: unknown) {
     return this.withAction<T>(data, 'put')
   }
 
-  del<T>(params?: object) {
+  del<T>(params?: unknown) {
     return this.withAction<T>(params, 'delete')
   }
 
-  upload<T>(file: File, data: object = {}) {
+  upload<T>(file: File, data: unknown = {}) {
     const formData = new FormData()
     formData.append('file', file)
     Object.entries(data).forEach(([k, v]) => formData.append(k, v))
@@ -161,3 +160,5 @@ export default class Request implements IRequest {
     this.emitCacheInstance.clearStoreFn()
   }
 }
+
+export const RequestFactory = Request.getInstance
