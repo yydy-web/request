@@ -2,7 +2,7 @@
   "name": "@yy-web/request",
   "type": "module",
   "version": "1.5.9",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "pnpm@10.21.0",
   "description": "yyweb request",
   "author": "Wangsh <949066041@qq.com>",
   "license": "MIT",
@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@vitest/ui": "^4.0.8",
-    "msw": "^2.12.0",
+    "msw": "^2.12.1",
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
@@ -54,7 +54,7 @@
     "bumpp": "^10.3.1",
     "eslint": "^9.39.1",
     "jsdom": "^27.1.0",
-    "tsdown": "^0.16.1",
+    "tsdown": "^0.16.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
   }
