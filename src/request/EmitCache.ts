@@ -76,8 +76,9 @@ export default class EmitCache {
       return true
     }
 
-    if (isCache) {
-      resolve(this.getStoreFn()(cacheKey) as Callback extends false ? T : Callback)
+    const cacheValue = this.getStoreFn()(cacheKey)
+    if (isCache && this.getStoreFn()(cacheKey)) {
+      resolve(cacheValue as Callback extends false ? T : Callback)
       return true
     }
 

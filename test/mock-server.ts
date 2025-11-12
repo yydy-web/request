@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync, stat } from 'node:fs'
 import path from 'node:path'
 import { URL } from 'node:url'
 import { http, HttpResponse } from 'msw'
@@ -21,11 +21,13 @@ const server = setupServer(
 
   http.get('/test/:id', ({ params }) => {
     const { id } = params
-    return HttpResponse.text(id as string)
+    return HttpResponse.text(`${id}`)
   }),
 
-  http.post('/test/upload', async () => {
-    return HttpResponse.json({ isFile: true })
+  http.post('/test/upload', async ({ request }) => {
+    const formData = await request.formData()
+    const file = formData.get('file') as File
+    return HttpResponse.json({ isFile: !!file, test: formData.get('test') })
   }),
 
   http.post('/test/save', async (req) => {
@@ -59,6 +61,10 @@ const server = setupServer(
 
   http.get('/test/down/error', () => {
     return HttpResponse.json({ error: 'test' })
+  }),
+
+  http.get('/get/cache', () => {
+    return HttpResponse.json({ value: `${Math.random()}` })
   }),
 )
 

@@ -124,7 +124,7 @@ export class Request implements IRequest {
     })
   }
 
-  get<T, Callback = unknown>(params?: boolean | unknown, cache = false, dataCallback?: (data: T) => Callback) {
+  get<T, Callback = false>(params?: boolean | unknown, cache = false, dataCallback?: (data: T) => Callback) {
     if (typeof params === 'boolean') {
       cache = params
       params = {}
@@ -152,8 +152,6 @@ export class Request implements IRequest {
     this.setConfig(Object.assign(this.config, { headers: { 'Content-Type': 'multipart/form-data' } }))
     return this.withAction<T>(formData, 'post')
   }
-
-  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
 
   clear() {
     Request.instance = null

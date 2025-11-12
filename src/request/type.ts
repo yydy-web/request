@@ -25,7 +25,6 @@ export interface IRequest {
   put: <T>(data?: object) => Promise<T>
   del: <T>(params?: object) => Promise<T>
   upload: <T>(file: File, data?: object) => Promise<T>
-  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
   clear: () => void
 }
 
