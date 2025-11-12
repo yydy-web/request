@@ -22,4 +22,38 @@ describe('store', () => {
     expect(storeValue).toBeDefined()
     expect(storeValue).toEqual(cacheValue)
   })
+
+  it ('del cache', async () => {
+    const requestInstance = Request.getInstance(axiosInstance)
+
+    const cacheValue = await requestInstance.setPath('/get/cache').get<{ value: string }>(true)
+    requestInstance.clear()
+
+    const storeValue = getStore(`/get/cacheGET{}`)
+    expect(cacheValue).toBeDefined()
+    expect(storeValue).toBeUndefined()
+  })
+
+  it('custom store', async () => {
+    let customStore: Record<string, unknown> = {}
+    const requestInstance = Request.getInstance(axiosInstance, {
+      getStore(key: string) {
+        return customStore[key] || undefined
+      },
+      setStore(key: string, value: unknown) {
+        customStore[key] = value
+      },
+      clearStore() {
+        customStore = {}
+      },
+    })
+
+    const cacheValue = await requestInstance.setPath('/get/cache').get<{ value: string }>(true)
+
+    const storeValue = customStore[`/get/cacheGET{}`]
+    expect(storeValue).toEqual(cacheValue)
+
+    requestInstance.clear()
+    expect(customStore[`/get/cacheGET{}`]).toBeUndefined()
+  })
 })

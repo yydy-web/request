@@ -32,9 +32,9 @@ export default class EmitCache {
 
   clearStoreFn() {
     if (this.cacheOptions.clearStore) {
-      return this.cacheOptions.clearStore
+      return this.cacheOptions.clearStore()
     }
-    return clearStore
+    return clearStore()
   }
 
   emitCache(isCache: boolean, cacheKey: string) {
