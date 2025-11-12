@@ -1,4 +1,4 @@
-import { readFileSync, stat } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { URL } from 'node:url'
 import { http, HttpResponse } from 'msw'
