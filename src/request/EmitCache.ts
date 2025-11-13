@@ -40,7 +40,7 @@ export default class EmitCache {
   emitCache(isCache: boolean, cacheKey: string) {
     const cacheData = this.getStoreFn()(cacheKey)
     if (isCache && this.sendToken.get(cacheKey) && cacheData) {
-      this.sendToken.delete(cacheKey)
+      this.sendTokenDelete(cacheKey)
       this.emit(cacheKey, cacheData)
     }
   }

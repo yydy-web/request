@@ -4,6 +4,8 @@ import { URL } from 'node:url'
 import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
+let flag = 1
+
 const server = setupServer(
   http.get('/test', () => {
     return HttpResponse.text('Hello World!')
@@ -64,7 +66,7 @@ const server = setupServer(
   }),
 
   http.get('/get/cache', () => {
-    return HttpResponse.json({ value: `${Math.random()}` })
+    return HttpResponse.json({ value: ++flag })
   }),
 )
 

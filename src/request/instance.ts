@@ -95,16 +95,23 @@ export class Request implements IRequest {
 
       this.waitQueneInstance.fnExec(async () => {
         this.execCancelToken(url)
+        const instanceOptions = {
+          url,
+          method: toMethod,
+          [isSendData ? 'data' : 'params']: sendData,
+          ...this.config,
+        }
         try {
           const res = await this.axiosInstance({
-            url,
-            method: toMethod,
-            [isSendData ? 'data' : 'params']: sendData,
-            cancelToken: new axios.CancelToken((c) => {
-              if (this.options?.cancelRepeat || this.cancelRepeat)
-                this.createCancelToken(url, c)
-            }),
-            ...this.config,
+            ...instanceOptions,
+            ...(this.options?.cancelRepeat || this.cancelRepeat
+              ? {
+                  cancelToken: new axios.CancelToken((c) => {
+                    if (this.options?.cancelRepeat || this.cancelRepeat)
+                      this.createCancelToken(url, c)
+                  }),
+                }
+              : {}),
           })
 
           const withData = typeof callback === 'function' ? callback(res as T) : res
@@ -113,8 +120,8 @@ export class Request implements IRequest {
 
           resolve(withData as Callback extends false ? T : Callback)
         }
-        catch {
-          reject(new Error('Request failed'))
+        catch (error) {
+          reject(error)
         }
         finally {
           this.cancelTokenMap.delete(cacheKey)

@@ -56,4 +56,17 @@ describe('store', () => {
     requestInstance.clear()
     expect(customStore[`/get/cacheGET{}`]).toBeUndefined()
   })
+
+  it ('store request', async () => {
+    const requestInstance = Request.getInstance(axiosInstance, { cancelRepeat: false })
+
+    const [value, value2] = await Promise.all(
+      [
+        requestInstance.setPath('/get/cache').get<{ value: string }>(true),
+        requestInstance.setPath('/get/cache').get<{ value: string }>(true),
+      ],
+    )
+
+    expect(value).toEqual(value2)
+  }, 2000)
 })
