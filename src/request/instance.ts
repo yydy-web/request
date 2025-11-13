@@ -104,14 +104,7 @@ export class Request implements IRequest {
         try {
           const res = await this.axiosInstance({
             ...instanceOptions,
-            ...(this.options?.cancelRepeat || this.cancelRepeat
-              ? {
-                  cancelToken: new axios.CancelToken((c) => {
-                    if (this.options?.cancelRepeat || this.cancelRepeat)
-                      this.createCancelToken(url, c)
-                  }),
-                }
-              : {}),
+            ...((this.options?.cancelRepeat || this.cancelRepeat) ? { cancelToken: new axios.CancelToken((c) => { this.createCancelToken(url, c) }) } : {}),
           })
 
           const withData = typeof callback === 'function' ? callback(res as T) : res

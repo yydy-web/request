@@ -11,13 +11,31 @@ describe('cancel', () => {
     requestInstance.setPath('/test').get()
 
     expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
+    requestInstance.clear()
   })
 
   it ('cancel force', async () => {
     const requestInstance = Request.getInstance(axiosInstance, { cancelRepeat: false })
 
-    const firstRequest = requestInstance.setPath('/test').get()
+    const [value, value2] = await Promise.all(
+      [
+        requestInstance.setPath('/test').get(),
+        requestInstance.setPath('/test').get(),
+      ],
+    )
 
-    expect(firstRequest).resolves.toBe('Hello World!')
+    expect(value).toBe('Hello World!')
+    expect(value2).toBe('Hello World!')
+  }, 1000)
+
+  it ('cancel force cancel', async () => {
+    const requestInstance = Request.getInstance(axiosInstance, { cancelRepeat: false })
+
+    const action = () => requestInstance.setPath('/test').forceCancelRepeat().get()
+
+    const firstRequest = action()
+    action()
+
+    expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
   }, 1000)
 })
