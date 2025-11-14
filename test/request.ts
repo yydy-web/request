@@ -7,7 +7,6 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use((data) => {
   return data.data
 }, (error) => {
-  console.log(error)
   return Promise.reject(error)
 })
 

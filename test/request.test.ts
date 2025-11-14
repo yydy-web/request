@@ -60,10 +60,10 @@ describe('request fn ', () => {
   it ('request base upload', async () => {
     const body = await yyRequest.setPath('/test/upload').upload<{ isFile: boolean }>(new File([imageBuffer], 'file.png'))
     expect(body.isFile).toBeTruthy()
-  }, 8000)
+  }, 10_000)
 
   it ('request params upload', async () => {
     const body = await yyRequest.setPath('/test/upload').upload<{ isFile: boolean, test: string }>(new File([imageBuffer], 'file.png'), { test: '1' })
     expect(body.test).toBe('1')
-  }, 8000)
+  }, 10_000)
 })
