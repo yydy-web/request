@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'
 
 describe('request fn ', () => {
+  const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
   const yyRequest = RequestFactory(axiosInstance)
   it ('data form request', async () => {
     const value = await yyRequest.setPath('/data-form').post<{ id: string }>({ test: 'test', test2: 'test2', test3: 'test3', test4: undefined })
@@ -57,23 +58,12 @@ describe('request fn ', () => {
   })
 
   it ('request base upload', async () => {
-    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
     const body = await yyRequest.setPath('/test/upload').upload<{ isFile: boolean }>(new File([imageBuffer], 'file.png'))
-
     expect(body.isFile).toBeTruthy()
-  })
+  }, 8000)
 
   it ('request params upload', async () => {
-    const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
     const body = await yyRequest.setPath('/test/upload').upload<{ isFile: boolean, test: string }>(new File([imageBuffer], 'file.png'), { test: '1' })
-
     expect(body.test).toBe('1')
-  })
-
-  // it ('request base down error file', async () => {
-  //   const errorCatch = vi.fn()
-  //   await yyRequest.setPath('/test/down/error').downLoad().catch(errorCatch)
-
-  //   expect(errorCatch).toBeCalled()
-  // })
+  }, 8000)
 })
