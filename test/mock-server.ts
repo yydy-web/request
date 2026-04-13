@@ -27,8 +27,11 @@ const server = setupServer(
   }),
 
   http.post('*/test/upload', async ({ request }) => {
+    // Clone before any body read: after formData() consumes or fails on the body, the
+    // original stream is unusable; cloning only inside catch throws "Body is unusable".
+    const requestForFallback = request.clone()
     const fallback = async () => {
-      const raw = await request.clone().text()
+      const raw = await requestForFallback.text()
       const testMatch = raw.match(/name="test"\r\n\r\n([^\r\n]+)/)
       const isFile = /name="file"/.test(raw)
       return HttpResponse.json({ isFile, test: testMatch ? testMatch[1] : null })
