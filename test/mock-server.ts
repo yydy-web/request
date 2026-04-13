@@ -7,50 +7,61 @@ import { setupServer } from 'msw/node'
 let flag = 1
 
 const server = setupServer(
-  http.get('/test', () => {
+  http.get(({ request }) => new URL(request.url).pathname === '/test', () => {
     return HttpResponse.text('Hello World!')
   }),
 
-  http.post('/data-form', async ({ request }) => {
+  http.post('*/data-form', async ({ request }) => {
     return HttpResponse.json(await request.clone().json())
   }),
 
-  http.get('/test/get', ({ request }) => {
+  http.get('*/test/get', ({ request }) => {
     const url = new URL(request.url)
     const id = url.searchParams.get('id')
     return HttpResponse.json({ id })
   }),
 
-  http.get('/test/:id', ({ params }) => {
+  http.get('*/test/:id', ({ params }) => {
     const { id } = params
     return HttpResponse.text(`${id}`)
   }),
 
-  http.post('/test/upload', async ({ request }) => {
-    const formData = await request.formData()
-    const file = formData.get('file') as File
-    return HttpResponse.json({ isFile: !!file, test: formData.get('test') })
+  http.post('*/test/upload', async ({ request }) => {
+    const fallback = async () => {
+      const raw = await request.clone().text()
+      const testMatch = raw.match(/name="test"\r\n\r\n([^\r\n]+)/)
+      const isFile = /name="file"/.test(raw)
+      return HttpResponse.json({ isFile, test: testMatch ? testMatch[1] : null })
+    }
+    try {
+      const formData = await request.formData()
+      const file = formData.get('file') as File
+      return HttpResponse.json({ isFile: !!file, test: formData.get('test') })
+    }
+    catch {
+      return fallback()
+    }
   }),
 
-  http.post('/test/save', async (req) => {
+  http.post('*/test/save', async (req) => {
     const requestBody = await req.request.json() as Record<string, any>
     return HttpResponse.text(requestBody.username === 'admin' ? '200' : '204')
   }),
 
-  http.put('/test/put/:id', async () => {
+  http.put('*/test/put/:id', async () => {
     return HttpResponse.json(true)
   }),
 
-  http.delete('/test/del/:id', async ({ params }) => {
+  http.delete('*/test/del/:id', async ({ params }) => {
     const { id } = params
     return HttpResponse.json(id)
   }),
 
-  http.get('/test/cache/1', () => {
+  http.get('*/test/cache/1', () => {
     return HttpResponse.text('Hello World!')
   }),
 
-  http.get('/test/downFile', () => {
+  http.get('*/test/downFile', () => {
     const imageBuffer = readFileSync(path.resolve(__dirname, './image.png'))
     return new Response(imageBuffer, {
       status: 200,
@@ -61,11 +72,11 @@ const server = setupServer(
     })
   }),
 
-  http.get('/test/down/error', () => {
+  http.get('*/test/down/error', () => {
     return HttpResponse.json({ error: 'test' })
   }),
 
-  http.get('/get/cache', () => {
+  http.get('*/get/cache', () => {
     return HttpResponse.json({ value: ++flag })
   }),
 )

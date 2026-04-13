@@ -3,13 +3,22 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   resolve: {
-    alias: {
-      '@yy-web/request': path.resolve(__dirname, './src/index.ts'),
-    },
+    alias: [
+      {
+        find: '@yy-web/request/fetch',
+        replacement: path.resolve(__dirname, './src/fetch.ts'),
+      },
+      {
+        find: '@yy-web/request',
+        replacement: path.resolve(__dirname, './src/index.ts'),
+      },
+    ],
   },
   test: {
     globals: true,
     root: __dirname,
+    fileParallelism: false,
+    maxWorkers: 1,
     testTimeout: 60 * 1000,
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],

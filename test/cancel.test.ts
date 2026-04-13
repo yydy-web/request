@@ -10,7 +10,7 @@ describe('cancel', () => {
     const firstRequest = requestInstance.setPath('/test').get()
     requestInstance.setPath('/test').get()
 
-    expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
+    await expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
     requestInstance.clear()
   })
 
@@ -36,6 +36,6 @@ describe('cancel', () => {
     const firstRequest = action()
     action()
 
-    expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
+    await expect(firstRequest).rejects.toSatisfy(err => isCancel(err))
   }, 1000)
 })

@@ -1,12 +1,19 @@
-import type { AxiosInstance, Canceler, Method } from 'axios'
+import type { AxiosInstance, Method } from 'axios'
+import type { RequestTransport } from './transport'
 import type { IAxiosRequestConfig, IRequest, RequestConfig } from './type'
-import axios from 'axios'
 import EmitCache from './EmitCache'
 import WaitQueue from './WaitQueue'
 
 export class Request implements IRequest {
   static instance: Request | null = null
-  private axiosInstance: AxiosInstance
+
+  static getInstance: (service: AxiosInstance, options?: RequestConfig) => Request = () => {
+    throw new Error(
+      '[@yy-web/request] Request.getInstance is not registered. Import `@yy-web/request` so the axios adapter can assign it.',
+    )
+  }
+
+  private transport: RequestTransport
 
   private emitCacheInstance: EmitCache
   private waitQueneInstance: WaitQueue
@@ -16,21 +23,15 @@ export class Request implements IRequest {
   private options?: RequestConfig
 
   private cancelRepeat = false
-  private cancelTokenMap: Map<string, Canceler>
+  private cancelTokenMap: Map<string, () => void>
 
-  constructor(service: AxiosInstance, options: RequestConfig = {}) {
-    this.axiosInstance = service
+  constructor(transport: RequestTransport, options: RequestConfig = {}) {
+    this.transport = transport
     this.options = options
 
     this.emitCacheInstance = new EmitCache(options)
     this.waitQueneInstance = new WaitQueue(this.options?.maxConcurrentNum)
-    this.cancelTokenMap = new Map<string, Canceler>()
-  }
-
-  static getInstance(service: AxiosInstance, options?: RequestConfig) {
-    if (!Request.instance)
-      Request.instance = new Request(service, options)
-    return Request.instance
+    this.cancelTokenMap = new Map<string, () => void>()
   }
 
   setPath(url: string, loading?: boolean) {
@@ -81,7 +82,7 @@ export class Request implements IRequest {
     }
   }
 
-  createCancelToken(cacheKey: string, cancelToken: Canceler) {
+  createCancelToken(cacheKey: string, cancelToken: () => void) {
     this.execCancelToken(cacheKey)
     this.cancelTokenMap.set(cacheKey, cancelToken)
   }
@@ -102,9 +103,9 @@ export class Request implements IRequest {
           ...this.config,
         }
         try {
-          const res = await this.axiosInstance({
-            ...instanceOptions,
-            ...((this.options?.cancelRepeat || this.cancelRepeat) ? { cancelToken: new axios.CancelToken((c) => { this.createCancelToken(url, c) }) } : {}),
+          const res = await this.transport.execute(instanceOptions, {
+            useCancelRepeat: !!(this.options?.cancelRepeat || this.cancelRepeat),
+            registerCanceler: c => this.createCancelToken(url, c),
           })
 
           const withData = typeof callback === 'function' ? callback(res as T) : res
@@ -149,7 +150,6 @@ export class Request implements IRequest {
     const formData = new FormData()
     formData.append('file', file)
     Object.entries(data).forEach(([k, v]) => formData.append(k, v))
-    this.setConfig(Object.assign(this.config, { headers: { 'Content-Type': 'multipart/form-data' } }))
     return this.withAction<T>(formData, 'post')
   }
 
@@ -158,5 +158,3 @@ export class Request implements IRequest {
     this.emitCacheInstance.clearStoreFn()
   }
 }
-
-export const RequestFactory = Request.getInstance

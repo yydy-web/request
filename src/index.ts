@@ -1,3 +1,5 @@
 export * from './cache'
+export { createFetchRequest } from './fetch'
+export type { CreateFetchRequestOptions } from './fetch'
 export * from './request'
 export * from './var'
