@@ -42,7 +42,7 @@
     "node": ">=20.12.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
