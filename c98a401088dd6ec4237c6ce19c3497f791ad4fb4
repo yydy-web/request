@@ -1,0 +1,23 @@
+.github/workflows/npm-publish-github-packages.yml
+  b883638fe0394933 46-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "c98a401088dd6ec4237c6ce19c3497f791ad4fb4",
+  "prompts": {
+    "b883638fe0394933": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4ccad10c-721e-4fba-94c3-97bcf426716d",
+        "model": "composer-2-fast"
+      },
+      "human_author": "a949066041",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 1,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    }
+  }
+}
