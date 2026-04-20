@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "13059185f58f934a6d43835b655edc912a83bb28",
+  "prompts": {
+    "b883638fe0394933": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "4ccad10c-721e-4fba-94c3-97bcf426716d",
+        "model": "composer-2-fast"
+      },
+      "human_author": "a949066041",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    }
+  }
+}
