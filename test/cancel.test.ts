@@ -1,4 +1,4 @@
-import { Request } from '@yy-web/request'
+import { Request } from '@yydy-web/request'
 import { isCancel } from 'axios'
 import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'

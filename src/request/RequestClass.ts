@@ -9,7 +9,7 @@ export class Request implements IRequest {
 
   static getInstance: (service: AxiosInstance, options?: RequestConfig) => Request = () => {
     throw new Error(
-      '[@yy-web/request] Request.getInstance is not registered. Import `@yy-web/request` so the axios adapter can assign it.',
+      '[@yydy-web/request] Request.getInstance is not registered. Import `@yydy-web/request` so the axios adapter can assign it.',
     )
   }
 

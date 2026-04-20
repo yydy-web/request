@@ -6,7 +6,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "@yy-web/request": ["./src/index.ts"]
+      "@yydy-web/request": ["./src/index.ts"]
     },
     "resolveJsonModule": true,
     "types": ["vitest/globals"],

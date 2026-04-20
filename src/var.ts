@@ -8,6 +8,6 @@ export function setRequest(requestFn: Request) {
 
 export function getRequest() {
   if (!request)
-    console.error('[yy-web:error]: not found request of @yy-web/request')
+    console.error('[yydy-web:error]: not found request of @yydy-web/request')
   return request
 }

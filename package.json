@@ -1,5 +1,5 @@
 {
-  "name": "@yy-web/request",
+  "name": "@yydy-web/request",
   "type": "module",
   "version": "2.0.1-beta.1",
   "packageManager": "pnpm@10.21.0",
@@ -16,6 +16,9 @@
     "url": "https://github.com/yydy-web/request/issues"
   },
   "keywords": [],
+  "engines": {
+    "node": ">=20.12.0"
+  },
   "sideEffects": [
     "**/registerAxios.ts",
     "**/request/index.ts"
@@ -38,6 +41,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepublishOnly": "pnpm run build",

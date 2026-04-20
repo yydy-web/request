@@ -1,4 +1,4 @@
-import { getRequest, RequestFactory, setRequest } from '@yy-web/request'
+import { getRequest, RequestFactory, setRequest } from '@yydy-web/request'
 import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'
 

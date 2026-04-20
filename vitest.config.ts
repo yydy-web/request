@@ -5,11 +5,11 @@ export default defineConfig({
   resolve: {
     alias: [
       {
-        find: '@yy-web/request/fetch',
+        find: '@yydy-web/request/fetch',
         replacement: path.resolve(__dirname, './src/fetch.ts'),
       },
       {
-        find: '@yy-web/request',
+        find: '@yydy-web/request',
         replacement: path.resolve(__dirname, './src/index.ts'),
       },
     ],

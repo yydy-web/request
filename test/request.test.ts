@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { RequestFactory } from '@yy-web/request'
+import { RequestFactory } from '@yydy-web/request'
 import { describe, expect, it } from 'vitest'
 import axiosInstance from './request'
 

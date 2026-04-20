@@ -1,46 +1,46 @@
-# This workflow will run tests using node and then publish a package to GitHub Packages when a release is created
-# For more information see: https://docs.github.com/en/actions/publishing-packages/publishing-nodejs-packages
+name: Release
 
-name: Node.js Package
+permissions:
+  contents: write
+  id-token: write
 
 on:
   push:
     tags:
-      - 'v*'
-
+      - "v*"
 jobs:
   release:
-    permissions:
-      id-token: write
-      contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
-
+        uses: pnpm/action-setup@v6
       - name: Set node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
-          node-version: 18
-          cache: pnpm
-          registry-url: 'https://registry.npmjs.org'
-
-      - run: npx changelogithub
+          registry-url: https://registry.npmjs.org/
+          node-version: lts/*
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - run: npx changelogithub # or changelogithub@0.12 to ensure a stable result
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-
-      - name: Install Dependencies
-        run: pnpm i
-
-      - name: PNPM build
-        run: pnpm run build
-
-      - name: Publish to NPM
-        run: pnpm -r publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+          registry-url: https://registry.npmjs.org/
+          cache: "pnpm"
+      - name: Install dependencies
+        run: pnpm install
+      - name: Update npm
+        run: npm install -g npm@latest
+      - run: npm publish --access=public

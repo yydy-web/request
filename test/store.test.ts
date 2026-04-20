@@ -1,4 +1,4 @@
-import { getStore, Request } from '@yy-web/request'
+import { getStore, Request } from '@yydy-web/request'
 import { describe, expect, it, vi } from 'vitest'
 import axiosInstance from './request'
 

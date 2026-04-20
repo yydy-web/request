@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import path from 'node:path'
-import { createFetchRequest } from '@yy-web/request/fetch'
+import { createFetchRequest } from '@yydy-web/request/fetch'
 import { beforeEach, describe, expect, it } from 'vitest'
 
 describe('fetch request', () => {
