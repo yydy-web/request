@@ -1,0 +1,14 @@
+package.json
+  h_07c7a6de139873 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "fa66fafe636d932ab0bcf4c7394e541c1a3006a1",
+  "prompts": {},
+  "humans": {
+    "h_07c7a6de139873": {
+      "author": "a949066041"
+    }
+  }
+}
