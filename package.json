@@ -1,5 +1,5 @@
 {
-  "name": "@yydy-web/request",
+  "name": "@yy-web/request",
   "type": "module",
   "version": "2.0.1-beta.4",
   "packageManager": "pnpm@10.21.0",
