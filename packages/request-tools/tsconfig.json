@@ -1,7 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
     "paths": {
       "@yy-web/request": ["../request/src/index.ts"]
     },
