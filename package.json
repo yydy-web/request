@@ -26,7 +26,7 @@
     "play:build": "pnpm -F playground build",
     "docs:dev": "pnpm -F docs dev",
     "docs:build": "pnpm -F docs build",
-    "release": "pnpm -F @yy-web/request build && bumpp --commit --push --tag",
+    "release": "pnpm -F @yy-web/request build && bumpp packages/request/package.json --commit --push --tag",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
