@@ -9,6 +9,8 @@
 - restful specification
 - Flexible configuration
 - Transport-agnostic: works with a native `fetch` client or an axios instance
+- Built-in caching with in-flight de-duplication for identical cached GETs
+- Concurrency limiting via `maxConcurrentNum`
 
 ## Install
 
@@ -69,6 +71,10 @@ request.setPath('xxxx').get(true)
 request.setPath('xxxx').get(params, true)
 ```
 
+> When caching is enabled, identical cached GETs fired concurrently are
+> de-duplicated into a single network request: the first call performs the
+> request and the rest resolve (or reject) with its outcome.
+
 ### Inspect built-in cache with `@yy-web/request-tools`
 
 `@yy-web/request-tools` can inspect the default in-memory cache provided by
@@ -128,10 +134,11 @@ service.interceptors.response.use((response: any) => {
 })
 
 interface RequestStoreConfig {
-  getStore: (key: string) => any
-  hasStore: (key: string) => boolean
-  setStore: (key: string, data: any) => void
-  cancelRepeat?: boolean // cancel repeat action
+  getStore?: (key: string) => any
+  hasStore?: (key: string) => boolean
+  setStore?: (key: string, data: any) => void
+  cancelRepeat?: boolean // cancel repeated in-flight requests to the same path
+  maxConcurrentNum?: number // max simultaneous requests, others queue (default: 99)
 }
 
 const yyRequest = request(service, { getStore, hasStore, setStore, cancelRepeat: true })
@@ -150,7 +157,7 @@ function setStore(key: string, data: any) {
 }
 setRequest(yyRequest)
 
-request.setPath('xxxx').downFile(data)
+request.setPath('xxxx').downLoad(data)
 ```
 
 ## type
@@ -165,7 +172,8 @@ interface IRequest {
   put: <T>(data?: object) => Promise<T>
   del: <T>(params?: object) => Promise<T>
   upload: <T>(file: File, data?: object) => Promise<T>
-  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<unknown>
+  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<void>
+  clear: () => void
 }
 ```
 

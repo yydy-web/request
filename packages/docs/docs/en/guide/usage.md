@@ -32,6 +32,10 @@ const yyRequest = request(service, {
 })
 ```
 
+> When caching is enabled, identical cached GETs fired concurrently are
+> de-duplicated into a single network request: the first call performs the
+> request and the rest resolve (or reject) with its outcome.
+
 ## POST / PUT / DELETE / UPLOAD
 
 ```ts
@@ -50,6 +54,15 @@ Replace placeholders in the path with `carry`:
 ```ts
 const id = 1
 request.setPath('xxxx/{id}').carry(id) // -> request.setPath('xxxx/1')
+```
+
+## Concurrency limiting
+
+Pass `maxConcurrentNum` to cap how many requests run at the same time; the rest
+are queued and fire as slots free up (default: `99`).
+
+```ts
+const yyRequest = request(service, { maxConcurrentNum: 5 })
 ```
 
 ## Download files
@@ -73,10 +86,11 @@ service.interceptors.response.use((response: any) => {
 })
 
 interface RequestStoreConfig {
-  getStore: (key: string) => any
-  hasStore: (key: string) => boolean
-  setStore: (key: string, data: any) => void
-  cancelRepeat?: boolean // cancel repeat action
+  getStore?: (key: string) => any
+  hasStore?: (key: string) => boolean
+  setStore?: (key: string, data: any) => void
+  cancelRepeat?: boolean // cancel repeated in-flight requests to the same path
+  maxConcurrentNum?: number // max simultaneous requests (default: 99)
 }
 
 const yyRequest = request(service, { getStore, hasStore, setStore, cancelRepeat: true })

@@ -62,3 +62,45 @@ jobs:
             echo "Publishing stable $VERSION under dist-tag 'latest'"
             npm publish --provenance --access public
           fi
+
+  # Build and deploy the docs site to GitHub Pages after a successful release.
+  # Kept as a separate job so its `environment` does NOT leak into the OIDC
+  # claims used by the npm trusted-publishing job above.
+  deploy-docs:
+    needs: release
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install Dependencies
+        run: pnpm i
+
+      - name: Build docs
+        run: pnpm -F docs build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload docs artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: packages/docs/doc_build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,6 +1,6 @@
 # Getting Started
 
-`@yy-web/request` is a flexible, plugin-based and chainable wrapper around [axios](https://axios-http.com/).
+`@yy-web/request` is a flexible, plugin-based and chainable wrapper around [axios](https://axios-http.com/) and the native `fetch` API.
 
 ## Features
 

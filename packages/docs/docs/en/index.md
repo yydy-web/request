@@ -3,7 +3,7 @@ pageType: home
 
 hero:
   name: "@yy-web/request"
-  text: "A chainable axios wrapper"
+  text: "A chainable request wrapper"
   tagline: Plugin mode, chain calls, RESTful specification and flexible configuration
   actions:
     - theme: brand
@@ -15,7 +15,7 @@ hero:
 
 features:
   - title: Plugin mode
-    details: Wrap any axios instance and extend behaviour through interceptors and stores.
+    details: Wrap any axios instance or fetch client and extend behaviour through interceptors and stores.
     icon: 🔌
   - title: Chain call
     details: Compose requests fluently with setPath, setConfig, carry, get, post and more.
@@ -24,6 +24,6 @@ features:
     details: First-class helpers for get / post / put / del / upload / downLoad.
     icon: 📐
   - title: Flexible configuration
-    details: Built-in caching, repeat-request cancellation and customizable storage.
+    details: Built-in caching, in-flight de-duplication, concurrency limiting and customizable storage.
     icon: ⚙️
 ---
