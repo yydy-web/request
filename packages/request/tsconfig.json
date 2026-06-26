@@ -4,7 +4,6 @@
     "paths": {
       "@yy-web/request": ["./src/index.ts"]
     },
-    "types": ["vitest/globals"],
     "declaration": true,
     "outDir": "dist"
   },

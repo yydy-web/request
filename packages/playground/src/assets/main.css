@@ -1,35 +1,60 @@
-@import './base.css';
+:root {
+  /* surfaces — warm aubergine ink, not slate */
+  --ink: #131019;
+  --ink-2: #1a1622;
+  --ink-3: #221c2e;
+  --line: rgba(236, 233, 244, 0.08);
+  --line-strong: rgba(236, 233, 244, 0.16);
+
+  /* text */
+  --text: #ece9f4;
+  --muted: #908bA6;
+  --faint: #615c77;
+
+  /* method / signal colors (functional palette) */
+  --get: #57d08f;
+  --post: #5b9cf5;
+  --put: #f2b14b;
+  --del: #f26a8d;
+
+  /* signature accent — orchid, ties the warm ink together */
+  --brand: #b98cff;
+  --brand-soft: rgba(185, 140, 255, 0.16);
+
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 18px;
+
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-ui: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--ink);
+  color: var(--text);
+  font-family: var(--font-ui);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-
-  font-weight: normal;
+  min-height: 100vh;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+::selection {
+  background: var(--brand-soft);
+  color: #fff;
 }

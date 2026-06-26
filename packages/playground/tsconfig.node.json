@@ -10,5 +10,5 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["rsbuild.config.*", "vitest.config.*", "cypress.config.*", "playwright.config.*"]
+  "include": ["rsbuild.config.*", "mock/**/*", "vitest.config.*", "cypress.config.*", "playwright.config.*"]
 }

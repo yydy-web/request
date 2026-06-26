@@ -1,5 +1,3 @@
-import type { RequestStoreConfig } from './request'
-
 const cacheKeys: Map<string, any> = new Map()
 const listeners = new Set<(event: DefaultCacheEvent) => void>()
 
@@ -29,7 +27,7 @@ function emit(event: DefaultCacheEvent) {
     listener(event)
 }
 
-export const setStore: RequestStoreConfig['setStore'] = (key: string, data: any) => {
+export const setStore: (key: string, data: unknown) => void = (key, data) => {
   cacheKeys.set(key, data)
   emit({
     type: 'set',
@@ -39,11 +37,11 @@ export const setStore: RequestStoreConfig['setStore'] = (key: string, data: any)
   })
 }
 
-export const getStore: RequestStoreConfig['getStore'] = (key: string) => {
+export const getStore: (key: string) => unknown = (key) => {
   return cacheKeys.has(key) ? cacheKeys.get(key) : undefined
 }
 
-export const hasStore: RequestStoreConfig['hasStore'] = (key: string) => {
+export const hasStore: (key: string) => boolean = (key) => {
   return cacheKeys.has(key)
 }
 

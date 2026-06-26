@@ -4,7 +4,6 @@
     "lib": ["ESNext", "DOM"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "ignoreDeprecations": "6.0",
     "resolveJsonModule": true,
     "strict": true,
     "strictNullChecks": false,
