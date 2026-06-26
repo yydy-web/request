@@ -45,6 +45,19 @@ jobs:
 
       # Build with pnpm, but publish the single package with npm so it can use
       # OIDC trusted publishing. No NPM_TOKEN needed.
+      # Prerelease versions (e.g. 2.0.0-beta.1) must go under a dedicated
+      # dist-tag; only stable versions are published to `latest`.
       - name: Publish to NPM
-        run: npm publish --provenance --access public
         working-directory: packages/request
+        run: |
+          VERSION="$(node -p "require('./package.json').version")"
+          if [[ "$VERSION" == *-* ]]; then
+            TAG="${VERSION#*-}"
+            TAG="${TAG%%.*}"
+            [ -z "$TAG" ] && TAG="next"
+            echo "Publishing prerelease $VERSION under dist-tag '$TAG'"
+            npm publish --provenance --access public --tag "$TAG"
+          else
+            echo "Publishing stable $VERSION under dist-tag 'latest'"
+            npm publish --provenance --access public
+          fi
