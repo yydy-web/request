@@ -50,6 +50,7 @@ jobs:
       - name: Publish to NPM
         working-directory: packages/request
         run: |
+          echo "node $(node -v) / npm $(npm -v)"
           VERSION="$(node -p "require('./package.json').version")"
           if [[ "$VERSION" == *-* ]]; then
             TAG="${VERSION#*-}"
