@@ -1,119 +1,49 @@
-# @yy-web/request
+# @yy-web/request monorepo
 
 [![NPM version](https://img.shields.io/npm/v/@yy-web/request?color=a1b858&label=)](https://www.npmjs.com/package/@yy-web/request)
 
-## Features
+A flexible, plugin-based and chainable [axios](https://axios-http.com/) request wrapper, managed as a pnpm workspace monorepo.
 
-- Plug-in mode
-- Chain call
-- restful specification
-- Flexible configuration
+## Packages
 
-## Install
+| Package | Path | Description |
+| --- | --- | --- |
+| [`@yy-web/request`](packages/request) | `packages/request` | The publishable core library. |
+| [`@yy-web/request-tools`](packages/request-tools) | `packages/request-tools` | Cache inspection helpers and a lightweight Vue debug panel. |
+| `playground` | `packages/playground` | Vue 3 example app that consumes the library. |
+| `docs` | `packages/docs` | Rspress documentation site. |
+
+## Requirements
+
+- Node.js >= 20
+- pnpm (see `packageManager` in `package.json`)
+
+## Setup
 
 ```bash
-npm i @yy-web/request
+pnpm install
 ```
 
-```js
-// request.ts
-import axios from 'axios'
-import request, { setRequest } from '@yy-web/request'
+## Scripts
 
-const service = axios.create({
-  baseURL: '/api',
-})
+Run from the repository root:
 
-const yyRequest = request(service)
-setRequest(yyRequest)
+| Command | Description |
+| --- | --- |
+| `pnpm build` | Build the core library (`@yy-web/request`). |
+| `pnpm dev` | Build the library in watch mode. |
+| `pnpm test` | Run the library test suite (Vitest). |
+| `pnpm coverage` | Run tests with coverage. |
+| `pnpm play` | Start the playground dev server. |
+| `pnpm play:build` | Build the playground. |
+| `pnpm docs:dev` | Start the documentation dev server. |
+| `pnpm docs:build` | Build the documentation site. |
+| `pnpm lint` / `pnpm lint:fix` | Lint the whole workspace. |
+| `pnpm release` | Build and publish a new version (`bumpp`). |
 
-export default yyRequest
-```
+## Documentation
 
-## Feature
-- get action
-```js
-import { getRequest } from '@yy-web/request' // get instance
-import request from './request.ts'
-
-// simple
-request.setPath('xxxx').get(params)
-
-// cache get
-request.setPath('xxxx').get(true)
-request.setPath('xxxx').get(params, true)
-```
-
-- other
-```js
-import { getRequest } from '@yy-web/request' // get instance
-import request from './request.ts'
-
-request.setPath('xxxx').post(data)
-request.setPath('xxxx').put()
-request.setPath('xxxx').upload()
-request.setPath('xxxx').del()
-```
-
-result carry
-```js
-const id = 1
-request.setPath('xxxx/{id}').carry(id) // -> request.setPath('xxxx/1')
-```
-
-- downfile
-```ts
-import axios from 'axios'
-import request, { fileInterceptorsResponseConfig, setRequest } from '@yy-web/request'
-
-const service = axios.create({
-  baseURL: '/api',
-})
-
-service.interceptors.response.use((response: any) => {
-  const { isFile, value } = fileInterceptorsResponseConfig(response)
-  if (isFile)
-    return value
-
-  return response.data
-})
-
-interface RequestStoreConfig {
-  getStore: (key: string) => any
-  setStore: (key: string, data: any) => void
-  cancelRepeat?: boolean // cancel repeat action
-}
-
-const yyRequest = request(service)
-
-const store = {}
-function getStore(key: string) {
-  return store[key]
-}
-
-function setStore(key: string, data: any) {
-  store[key] = data
-}
-setRequest(yyRequest, { getStore, setStore, cancelRepeat: true })
-
-request.setPath('xxxx').downFile(data)
-```
-
-## type
-```ts
-interface IRequest {
-  setPath: (url: string, loading?: boolean) => IRequest
-  setConfig: (config: IAxiosRequestConfig) => IRequest
-  forceCancelRepeat: () => IRequest
-  carry: (key: string | number) => IRequest
-  get: <T, Callback = false>(params?: boolean | object, cache?: boolean, dataCallback?: (data: T) => Callback) => Promise<Callback extends false ? T : Callback>
-  post: <T>(data?: object | FormData) => Promise<T>
-  put: <T>(data?: object) => Promise<T>
-  del: <T>(params?: object) => Promise<T>
-  upload: <T>(file: File, data?: object) => Promise<T>
-  downLoad: (params?: object, methods?: 'post' | 'get', fileName?: string) => Promise<unknown>
-}
-```
+See [`packages/docs`](packages/docs) or the published documentation site for full usage and API reference. Library-specific docs also live in [`packages/request/README.md`](packages/request/README.md).
 
 ## License
 

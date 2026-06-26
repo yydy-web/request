@@ -71,6 +71,14 @@ typings/
 # Nuxt generate
 dist
 
+# Rspress build output
+doc_build
+.rspress
+
+# TypeScript incremental build info
+*.tsbuildinfo
+.tmp
+
 # vuepress build output
 .vuepress/dist
 

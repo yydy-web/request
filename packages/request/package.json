@@ -1,0 +1,58 @@
+{
+  "name": "@yy-web/request",
+  "version": "1.5.9",
+  "description": "yyweb request",
+  "author": "Wangsh <949066041@qq.com>",
+  "license": "MIT",
+  "funding": "https://github.com/a949066041",
+  "homepage": "https://github.com/yydy-web",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yydy-web/request.git",
+    "directory": "packages/request"
+  },
+  "bugs": {
+    "url": "https://github.com/yydy-web/request/issues"
+  },
+  "keywords": [],
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm run build",
+    "dev": "pnpm run build --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
+    "test": "vitest",
+    "coverage": "vitest run --coverage",
+    "test:ui": "vitest --ui"
+  },
+  "peerDependencies": {
+    "axios": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "axios": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@vitest/coverage-istanbul": "^4.1.9",
+    "@vitest/ui": "^4.1.9",
+    "axios": "^1.18.1",
+    "jsdom": "^29.1.1",
+    "msw": "^2.14.6",
+    "tsup": "^8.5.1",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.9"
+  }
+}

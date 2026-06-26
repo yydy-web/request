@@ -1,0 +1,37 @@
+{
+  "name": "@yy-web/request-tools",
+  "version": "2.0.0",
+  "description": "Tools for inspecting @yy-web/request cache",
+  "author": "Wangsh <949066041@qq.com>",
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prepublishOnly": "pnpm run build",
+    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.39"
+  },
+  "dependencies": {
+    "@yy-web/request": "workspace:^"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.1",
+    "vitest": "^4.1.9",
+    "vue": "^3.5.39"
+  }
+}
