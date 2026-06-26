@@ -13,19 +13,14 @@ trustPolicyExclude:
 # the lockfile (ERR_PNPM_LOCKFILE_RESOLUTION_VERIFICATION).
 minimumReleaseAge: 0
 
-# Allow these dependencies to run their (required) install/build scripts so the
-# pre-run deps check stops failing with ERR_PNPM_IGNORED_BUILDS.
-onlyBuiltDependencies:
-  - "@parcel/watcher"
-  - core-js
-  - esbuild
-  - msw
+# pnpm 11.9 gates dependency build scripts behind per-package approval (this is
+# what `pnpm approve-builds` writes). Approve these so the pre-run deps check
+# stops failing with ERR_PNPM_IGNORED_BUILDS in CI.
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  esbuild: true
+  msw: true
 
 packages:
   - packages/*
-
-allowBuilds:
-  '@parcel/watcher': true
-  core-js: set this to true or false
-  esbuild: false
-  msw: true
