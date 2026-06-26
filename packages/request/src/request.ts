@@ -5,9 +5,11 @@ import { Publisher } from './mitt'
 type Canceler = () => void
 
 /** Outcome of an in-flight request, broadcast to de-duplicated waiters. */
-type SettledResult
-  = | { ok: true, value: unknown }
-    | { ok: false, error: unknown }
+interface SettledResult {
+  ok: boolean
+  value?: unknown
+  error?: unknown
+}
 
 /**
  * Normalized request config shared by every transport (axios or fetch).
@@ -132,7 +134,7 @@ export default function (service: AxiosInstance | RequestAdapter, storeOption?: 
           if (settled.ok)
             resolve(settled.value as Callback extends false ? T : Callback)
           else
-            reject(settled.error)
+            reject((settled as { error: unknown }).error)
         })
         return true
       }
