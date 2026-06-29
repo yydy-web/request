@@ -7,5 +7,6 @@ export default antfu({
     '**/.rspress/**',
     '**/node_modules/**',
     '**/*.tsbuildinfo',
+    '**/*.md',
   ],
 })
