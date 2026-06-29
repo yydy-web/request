@@ -81,6 +81,26 @@ describe('fetch client', () => {
 })
 
 describe('fetch client interceptors', () => {
+  it('request interceptor injects Authorization header from a token getter', async () => {
+    const getToken = vi.fn(() => 'secret-token')
+    const authClient = createFetchClient({
+      baseURL: ORIGIN,
+      interceptors: {
+        request: (config) => {
+          config.headers = {
+            ...config.headers,
+            Authorization: `Bearer ${getToken()}`,
+          }
+          return config
+        },
+      },
+    })
+
+    const value = await authClient({ url: '/test/auth', method: 'GET' } as any)
+    expect(getToken).toHaveBeenCalled()
+    expect(value.auth).toBe('Bearer secret-token')
+  })
+
   it('runs request and response interceptors', async () => {
     const onRequest = vi.fn((config: any) => config)
     const interceptedClient = createFetchClient({

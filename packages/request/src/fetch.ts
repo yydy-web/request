@@ -27,6 +27,30 @@ export interface FetchClientError extends Error {
   config: RequestAdapterConfig
 }
 
+function normalizeHeaders(headers?: unknown): Record<string, string> {
+  if (!headers)
+    return {}
+
+  if (headers instanceof Headers) {
+    const result: Record<string, string> = {}
+    headers.forEach((value, key) => {
+      result[key] = value
+    })
+    return result
+  }
+
+  if (typeof headers === 'object') {
+    const result: Record<string, string> = {}
+    for (const [key, value] of Object.entries(headers as Record<string, unknown>)) {
+      if (value != null)
+        result[key] = String(value)
+    }
+    return result
+  }
+
+  return {}
+}
+
 function hasHeader(headers: Record<string, string>, name: string) {
   const lower = name.toLowerCase()
   return Object.keys(headers).some(key => key.toLowerCase() === lower)
@@ -117,7 +141,10 @@ export function createFetchClient(options: FetchClientOptions = {}): RequestAdap
   const { baseURL = '', headers: baseHeaders = {}, timeout, interceptors = {} } = options
 
   return async function fetchAdapter(rawConfig: RequestAdapterConfig): Promise<any> {
-    let config = rawConfig
+    let config: RequestAdapterConfig = {
+      ...rawConfig,
+      headers: normalizeHeaders(rawConfig.headers),
+    }
     if (interceptors.request)
       config = await interceptors.request(config)
 
@@ -125,7 +152,10 @@ export function createFetchClient(options: FetchClientOptions = {}): RequestAdap
     const isBodyMethod = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(method)
     const url = buildURL(baseURL, config.url, config.params)
 
-    const headers: Record<string, string> = { ...baseHeaders, ...(config.headers as Record<string, string>) }
+    const headers: Record<string, string> = {
+      ...baseHeaders,
+      ...normalizeHeaders(config.headers),
+    }
 
     let body: BodyInit | undefined
     if (isBodyMethod && config.data != null) {

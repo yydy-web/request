@@ -47,7 +47,7 @@ interface FetchClientOptions {
 
 ## 拦截器
 
-拦截器与 axios 的工作流类似，但都是普通函数。
+拦截器与 axios 的工作流类似，但都是普通函数，且**在 `createFetchClient` 创建时通过 `interceptors` 选项配置**——返回的 fetch 客户端没有 axios 那种 `.interceptors.request.use()` 链式 API。
 
 ```ts
 const client = createFetchClient({
@@ -71,6 +71,77 @@ const client = createFetchClient({
       if (error.status === 401)
         redirectToLogin()
       throw error
+    },
+  },
+})
+```
+
+### 注入 Token（请求拦截器）
+
+Token 应通过 **`interceptors.request`** 在每次请求发出前动态注入，而不是写死在 `headers` 选项里——`headers` 只在客户端创建时求值一次，token 刷新后不会自动更新。
+
+```ts
+function getToken() {
+  return localStorage.getItem('token') ?? ''
+}
+
+const client = createFetchClient({
+  baseURL: '/api',
+  interceptors: {
+    request: (config) => {
+      const token = getToken()
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        }
+      }
+      return config
+    },
+  },
+})
+
+const yyRequest = request(client)
+```
+
+`getToken` 为异步函数时，拦截器同样支持 `async`：
+
+```ts
+interceptors: {
+  request: async (config) => {
+    const token = await getToken()
+    if (token) {
+      config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
+    }
+    return config
+  },
+},
+```
+
+::: warning 常见踩坑
+
+1. **不要用静态 `headers` 传 token**：`headers: { Authorization: getToken() }` 只在模块加载时执行一次。
+2. **不要对 fetch 客户端使用 axios 拦截器**：`createFetchClient` 返回的是 `(config) => Promise<data>` 函数，没有 `.interceptors` 属性。
+3. **必须 `return config`**：拦截器需要返回修改后的 config，否则 header 不会生效。
+4. **axios 与 fetch 分开配置**：若项目同时存在两种传输层，axios 走 `service.interceptors.request.use(...)`，fetch 走 `createFetchClient({ interceptors: { request } })`。
+
+:::
+
+与 axios 的对比：
+
+```ts
+// axios
+service.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${getToken()}`
+  return config
+})
+
+// fetch
+createFetchClient({
+  interceptors: {
+    request: (config) => {
+      config.headers = { ...config.headers, Authorization: `Bearer ${getToken()}` }
+      return config
     },
   },
 })

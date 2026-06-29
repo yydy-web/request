@@ -48,7 +48,10 @@ interface FetchClientOptions {
 
 ## Interceptors
 
-Interceptors mirror the axios workflow but are plain functions.
+Interceptors mirror the axios workflow but are plain functions, configured **at
+`createFetchClient` creation time via the `interceptors` option**. The returned fetch
+client is a `(config) => Promise<data>` function — it does **not** expose axios-style
+`.interceptors.request.use()`.
 
 ```ts
 const client = createFetchClient({
@@ -72,6 +75,79 @@ const client = createFetchClient({
       if (error.status === 401)
         redirectToLogin()
       throw error
+    },
+  },
+})
+```
+
+### Injecting a token (request interceptor)
+
+Tokens should be injected dynamically in **`interceptors.request`** before each
+outgoing call — not via the static `headers` option, which is evaluated once at client
+creation and will not pick up refreshed tokens.
+
+```ts
+function getToken() {
+  return localStorage.getItem('token') ?? ''
+}
+
+const client = createFetchClient({
+  baseURL: '/api',
+  interceptors: {
+    request: (config) => {
+      const token = getToken()
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        }
+      }
+      return config
+    },
+  },
+})
+
+const yyRequest = request(client)
+```
+
+When `getToken` is async, the interceptor can be `async` too:
+
+```ts
+interceptors: {
+  request: async (config) => {
+    const token = await getToken()
+    if (token) {
+      config.headers = { ...config.headers, Authorization: `Bearer ${token}` }
+    }
+    return config
+  },
+},
+```
+
+::: warning Common pitfalls
+
+1. **Do not pass tokens via static `headers`**: `headers: { Authorization: getToken() }` runs once at module load.
+2. **Do not use axios interceptors on the fetch client**: `createFetchClient` returns a function, not an axios instance — there is no `.interceptors` property.
+3. **Always `return config`**: the interceptor must return the modified config or headers will not apply.
+4. **Configure axios and fetch separately**: axios uses `service.interceptors.request.use(...)`, fetch uses `createFetchClient({ interceptors: { request } })`.
+
+:::
+
+Side-by-side with axios:
+
+```ts
+// axios
+service.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${getToken()}`
+  return config
+})
+
+// fetch
+createFetchClient({
+  interceptors: {
+    request: (config) => {
+      config.headers = { ...config.headers, Authorization: `Bearer ${getToken()}` }
+      return config
     },
   },
 })

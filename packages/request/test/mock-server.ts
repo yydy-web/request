@@ -20,6 +20,10 @@ const server = setupServer(
     return HttpResponse.json({ id })
   }),
 
+  http.get('/test/auth', ({ request }) => {
+    return HttpResponse.json({ auth: request.headers.get('authorization') })
+  }),
+
   // Returns JSON-shaped text under a non-JSON content type so the fetch
   // adapter has to opportunistically parse it (mirrors axios' behaviour).
   http.get('/test/text-json', () => {

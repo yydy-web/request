@@ -18,7 +18,26 @@ service.interceptors.response.use((response: any) => {
 export const axiosRequest = request(service, { getStore, hasStore, setStore })
 
 // --- native fetch transport -----------------------------------------------
-const fetchClient = createFetchClient({ baseURL: '' })
+function getToken() {
+  return localStorage.getItem('token') ?? ''
+}
+
+const fetchClient = createFetchClient({
+  baseURL: '',
+  interceptors: {
+    // fetch 没有 axios 那种 .interceptors.request.use，token 要在创建时注入。
+    request: (config) => {
+      const token = getToken()
+      if (token) {
+        config.headers = {
+          ...config.headers,
+          Authorization: `Bearer ${token}`,
+        }
+      }
+      return config
+    },
+  },
+})
 export const fetchRequest = request(fetchClient, { getStore, hasStore, setStore })
 
 // --- concurrency-limited transport (for the maxConcurrentNum demo) ---------
