@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@yy-web/request": ["./src/index.ts"]
+    },
+    "declaration": true,
+    "outDir": "dist"
+  },
+  "include": ["./src", "./test"],
+  "exclude": ["node_modules", "dist"]
+}

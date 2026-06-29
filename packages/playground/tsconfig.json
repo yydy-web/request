@@ -1,0 +1,18 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "compilerOptions": {
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@yy-web/request": ["../request/src/index.ts"],
+      "@yy-web/request-tools": ["../request-tools/src/index.ts"]
+    }
+  },
+
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ],
+  "include": ["env.d.ts", "src/**/*", "src/**/*.vue"]
+}

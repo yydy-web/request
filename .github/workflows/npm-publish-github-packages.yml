@@ -15,19 +15,23 @@ jobs:
       contents: write
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
 
       - name: Set node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
           cache: pnpm
           registry-url: 'https://registry.npmjs.org'
+
+      # Trusted publishing (OIDC) requires npm CLI >= 11.5.1.
+      - name: Update npm
+        run: npm install -g npm@latest
 
       - run: npx changelogithub
         env:
@@ -39,8 +43,22 @@ jobs:
       - name: PNPM build
         run: pnpm run build
 
+      # Build with pnpm, but publish the single package with npm so it can use
+      # OIDC trusted publishing. No NPM_TOKEN needed.
+      # Prerelease versions (e.g. 2.0.0-beta.1) must go under a dedicated
+      # dist-tag; only stable versions are published to `latest`.
       - name: Publish to NPM
-        run: pnpm -r publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-          NPM_CONFIG_PROVENANCE: true
+        working-directory: packages/request
+        run: |
+          echo "node $(node -v) / npm $(npm -v)"
+          VERSION="$(node -p "require('./package.json').version")"
+          if [[ "$VERSION" == *-* ]]; then
+            TAG="${VERSION#*-}"
+            TAG="${TAG%%.*}"
+            [ -z "$TAG" ] && TAG="next"
+            echo "Publishing prerelease $VERSION under dist-tag '$TAG'"
+            npm publish --provenance --access public --tag "$TAG"
+          else
+            echo "Publishing stable $VERSION under dist-tag 'latest'"
+            npm publish --provenance --access public
+          fi

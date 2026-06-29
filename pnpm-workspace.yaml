@@ -1,0 +1,26 @@
+# Disable the "package must be N minutes old" gate. pnpm 11.9 defaults this to
+# 1440 (24h), which rejects freshly published transitive deps already pinned in
+# the lockfile (ERR_PNPM_LOCKFILE_RESOLUTION_VERIFICATION).
+minimumReleaseAge: 0
+
+shellEmulator: true
+
+trustPolicy: no-downgrade
+
+# Keep no-downgrade enforcement, but allow these verified transitive deps whose
+# specific pinned versions lack the provenance their earlier releases had.
+trustPolicyExclude:
+  - chokidar@4.0.3
+  - semver@6.3.1
+
+# pnpm 11.9 gates dependency build scripts behind per-package approval (this is
+# what `pnpm approve-builds` writes). Approve these so the pre-run deps check
+# stops failing with ERR_PNPM_IGNORED_BUILDS in CI.
+allowBuilds:
+  '@parcel/watcher': true
+  core-js: true
+  esbuild: true
+  msw: true
+
+packages:
+  - packages/*

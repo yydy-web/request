@@ -1,9 +1,10 @@
 {
-  "name": "@yy-web/request",
+  "name": "@yy-web/monorepo",
   "type": "module",
-  "version": "1.5.9",
-  "packageManager": "pnpm@9.5.0+sha256.dbdf5961c32909fb030595a9daa1dae720162e658609a8f92f2fa99835510ca5",
-  "description": "yyweb request",
+  "version": "2.0.0-beta.2",
+  "private": true,
+  "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b",
+  "description": "yyweb request monorepo",
   "author": "Wangsh <949066041@qq.com>",
   "license": "MIT",
   "funding": "https://github.com/a949066041",
@@ -15,47 +16,25 @@
   "bugs": {
     "url": "https://github.com/yydy-web/request/issues"
   },
-  "keywords": [],
-  "sideEffects": false,
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
-    }
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "prepublishOnly": "pnpm run build",
-    "dev": "pnpm run build --watch",
-    "build": "tsup src/index.ts --format cjs,esm --dts --no-splitting --config tsup.json",
-    "release": "bumpp --commit --push --tag",
-    "test": "vitest",
+    "build": "pnpm -F @yy-web/request build",
+    "dev": "pnpm -F @yy-web/request dev",
+    "test": "pnpm -F @yy-web/request test",
+    "coverage": "pnpm -F @yy-web/request coverage",
+    "test:ui": "pnpm -F @yy-web/request test:ui",
+    "play": "pnpm -F playground dev",
+    "play:build": "pnpm -F playground build",
+    "docs:dev": "pnpm -F docs dev",
+    "docs:build": "pnpm -F docs build",
+    "release": "pnpm -F @yy-web/request build && bumpp packages/request/package.json --commit --push --tag",
     "lint": "eslint .",
-    "coverage": "vitest run --coverage",
-    "test:ui": "vitest --ui"
-  },
-  "dependencies": {
-    "@vitest/ui": "^2.0.2",
-    "msw": "^2.3.1",
-    "node-fetch": "^3.3.2"
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
-    "@antfu/eslint-config": "^2.22.2",
-    "@types/node": "^20.14.10",
-    "@vitest/browser": "^2.0.2",
-    "@vitest/coverage-istanbul": "^2.0.2",
-    "axios": "^1.7.2",
-    "bumpp": "^9.4.1",
-    "eslint": "^9.7.0",
-    "jsdom": "^24.1.0",
-    "tsup": "^8.1.0",
-    "typescript": "^5.5.3",
-    "vitest": "^2.0.2"
+    "@antfu/eslint-config": "^9.1.0",
+    "@types/node": "^26.0.1",
+    "bumpp": "^11.1.0",
+    "eslint": "^10.6.0",
+    "typescript": "^6.0.3"
   }
 }

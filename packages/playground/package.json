@@ -1,0 +1,27 @@
+{
+  "name": "playground",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "rsbuild dev",
+    "build": "pnpm run type-check && pnpm run build-only",
+    "preview": "rsbuild preview",
+    "build-only": "rsbuild build",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@yy-web/request": "workspace:*",
+    "@yy-web/request-tools": "workspace:*",
+    "axios": "^1.18.1",
+    "vue": "^3.5.39"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^2.1.1",
+    "@rsbuild/plugin-vue": "^2.0.0",
+    "@types/node": "^26.0.1",
+    "@vue/tsconfig": "^0.9.1",
+    "typescript": "^6.0.3",
+    "vue-tsc": "^3.3.5"
+  }
+}
