@@ -24,7 +24,7 @@
     "test": "vitest run"
   },
   "peerDependencies": {
-    "vue": "^3.5.39"
+    "vue": "^3.5.40"
   },
   "dependencies": {
     "@yy-web/request": "workspace:^"
@@ -32,6 +32,6 @@
   "devDependencies": {
     "tsup": "^8.5.1",
     "vitest": "^4.1.9",
-    "vue": "^3.5.39"
+    "vue": "^3.5.40"
   }
 }

@@ -14,7 +14,7 @@
     "@yy-web/request": "workspace:*",
     "@yy-web/request-tools": "workspace:*",
     "axios": "^1.18.1",
-    "vue": "^3.5.39"
+    "vue": "^3.5.40"
   },
   "devDependencies": {
     "@rsbuild/core": "^2.1.4",
